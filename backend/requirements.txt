@@ -1,5 +1,6 @@
 # Phase 1-2: Core dependencies for Vercel serverless deployment
 fastapi==0.115.4
+uvicorn[standard]==0.30.6
 pydantic-settings==2.6.1
 supabase==2.10.0
 python-dotenv==1.0.1
