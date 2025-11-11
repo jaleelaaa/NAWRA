@@ -155,3 +155,41 @@ async def create_test_user():
             "error": str(e),
             "message": "Failed to create test user"
         }
+
+@app.post("/api/debug/reset-test-password")
+async def reset_test_password():
+    """Reset test user password to Admin@123456"""
+    try:
+        from app.db.supabase_client import get_supabase
+        from app.core.security import get_password_hash
+
+        supabase = get_supabase()
+
+        # Generate new password hash
+        new_password_hash = get_password_hash("Admin@123456")
+
+        # Update password
+        result = supabase.table('users').update({
+            'password_hash': new_password_hash
+        }).eq('email', 'admin@nawra.om').execute()
+
+        if result.data and len(result.data) > 0:
+            return {
+                "status": "success",
+                "message": "Password reset successfully",
+                "user": {
+                    "email": "admin@nawra.om",
+                    "password": "Admin@123456"
+                }
+            }
+        else:
+            return {
+                "status": "error",
+                "message": "User not found"
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "Failed to reset password"
+        }
