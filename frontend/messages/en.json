@@ -1,0 +1,146 @@
+{
+  "common": {
+    "appName": "NAWRA - Library Management System",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "catalog": "Catalog",
+    "circulation": "Circulation",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "login": {
+    "title": "Sign In to Your Account",
+    "subtitle": "Access the national library catalog and management system",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "librarian@ministry.om",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your secure password",
+    "rememberMe": "Remember me for 30 days",
+    "forgotPassword": "Forgot Password?",
+    "signInButton": "Sign In",
+    "noAccount": "Don't have an account?",
+    "requestAccess": "Request Access",
+    "needHelp": "Need Help? Contact IT Helpdesk",
+    "branding": {
+      "title": "Sultanate Library System",
+      "subtitle": "Ministry-Level Library Management",
+      "secureTitle": "Secure Access",
+      "secureDescription": "This is a protected government system. All access is logged and monitored."
+    },
+    "errors": {
+      "invalidEmail": "Please enter a valid email address",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "invalidCredentials": "Incorrect email or password",
+      "networkError": "Network error. Please try again",
+      "unknownError": "An unexpected error occurred"
+    },
+    "success": {
+      "loginSuccess": "Login successful"
+    }
+  },
+  "languages": {
+    "ar": "العربية",
+    "en": "English"
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage library users and permissions",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "viewDetails": "View Details",
+    "searchPlaceholder": "Search by name or email...",
+    "filters": {
+      "all": "All Users",
+      "active": "Active",
+      "inactive": "Inactive",
+      "staff": "Staff",
+      "patron": "Patron",
+      "role": "Role",
+      "userType": "User Type",
+      "status": "Status"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "userType": "User Type",
+      "status": "Status",
+      "createdAt": "Created",
+      "actions": "Actions",
+      "noUsers": "No users found",
+      "showing": "Showing"
+    },
+    "form": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter full name",
+      "email": "Email Address",
+      "emailPlaceholder": "user@ministry.om",
+      "password": "Password",
+      "passwordPlaceholder": "Enter secure password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter password",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+968 XXXX XXXX",
+      "address": "Address",
+      "addressPlaceholder": "Enter address",
+      "role": "Role",
+      "selectRole": "Select role",
+      "userType": "User Type",
+      "selectUserType": "Select user type",
+      "staff": "Staff",
+      "patron": "Patron",
+      "isActive": "Active Status",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create User",
+      "update": "Update User"
+    },
+    "validation": {
+      "nameRequired": "Full name is required",
+      "nameMin": "Name must be at least 2 characters",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordMatch": "Passwords must match",
+      "phoneInvalid": "Invalid phone number",
+      "roleRequired": "Role is required",
+      "userTypeRequired": "User type is required"
+    },
+    "messages": {
+      "createSuccess": "User created successfully",
+      "updateSuccess": "User updated successfully",
+      "deleteSuccess": "User deleted successfully",
+      "deleteConfirm": "Are you sure you want to delete this user?",
+      "deleteWarning": "This action cannot be undone",
+      "bulkDeleteConfirm": "Are you sure you want to delete {count} users?",
+      "exportSuccess": "Users exported successfully",
+      "error": "An error occurred"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "librarian": "Librarian",
+      "patron": "Patron"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "view": "View",
+      "export": "Export",
+      "bulkDelete": "Delete Selected",
+      "selected": "{count} selected"
+    }
+  }
+}

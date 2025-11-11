@@ -1,0 +1,146 @@
+{
+  "common": {
+    "appName": "نورة - نظام إدارة المكتبة",
+    "loading": "جار التحميل...",
+    "error": "حدث خطأ",
+    "success": "تم بنجاح"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "users": "المستخدمون",
+    "catalog": "الفهرس",
+    "circulation": "الإعارات",
+    "reports": "التقارير",
+    "settings": "الإعدادات"
+  },
+  "login": {
+    "title": "تسجيل الدخول إلى حسابك",
+    "subtitle": "الوصول إلى فهرس المكتبة الوطنية ونظام الإدارة",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "librarian@ministry.om",
+    "passwordLabel": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور الآمنة",
+    "rememberMe": "تذكرني لمدة 30 يوماً",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "signInButton": "تسجيل الدخول",
+    "noAccount": "ليس لديك حساب؟",
+    "requestAccess": "طلب الوصول",
+    "needHelp": "تحتاج مساعدة؟ اتصل بمكتب الدعم التقني",
+    "branding": {
+      "title": "نظام المكتبة السلطانية",
+      "subtitle": "إدارة المكتبة على مستوى الوزارة",
+      "secureTitle": "وصول آمن",
+      "secureDescription": "هذا نظام حكومي محمي. يتم تسجيل ومراقبة جميع عمليات الوصول."
+    },
+    "errors": {
+      "invalidEmail": "يرجى إدخال بريد إلكتروني صالح",
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "passwordRequired": "كلمة المرور مطلوبة",
+      "passwordMin": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      "networkError": "خطأ في الاتصال. يرجى المحاولة مرة أخرى",
+      "unknownError": "حدث خطأ غير متوقع"
+    },
+    "success": {
+      "loginSuccess": "تم تسجيل الدخول بنجاح"
+    }
+  },
+  "languages": {
+    "ar": "العربية",
+    "en": "English"
+  },
+  "users": {
+    "title": "إدارة المستخدمين",
+    "subtitle": "إدارة مستخدمي المكتبة والصلاحيات",
+    "addUser": "إضافة مستخدم",
+    "editUser": "تعديل المستخدم",
+    "deleteUser": "حذف المستخدم",
+    "viewDetails": "عرض التفاصيل",
+    "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني...",
+    "filters": {
+      "all": "جميع المستخدمين",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "staff": "موظف",
+      "patron": "مستفيد",
+      "role": "الدور",
+      "userType": "نوع المستخدم",
+      "status": "الحالة"
+    },
+    "table": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "userType": "نوع المستخدم",
+      "status": "الحالة",
+      "createdAt": "تاريخ الإنشاء",
+      "actions": "الإجراءات",
+      "noUsers": "لم يتم العثور على مستخدمين",
+      "showing": "عرض"
+    },
+    "form": {
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "أدخل الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "user@ministry.om",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة مرور آمنة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+      "phone": "رقم الهاتف",
+      "phonePlaceholder": "+968 XXXX XXXX",
+      "address": "العنوان",
+      "addressPlaceholder": "أدخل العنوان",
+      "role": "الدور",
+      "selectRole": "اختر الدور",
+      "userType": "نوع المستخدم",
+      "selectUserType": "اختر نوع المستخدم",
+      "staff": "موظف",
+      "patron": "مستفيد",
+      "isActive": "الحالة النشطة",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "create": "إنشاء مستخدم",
+      "update": "تحديث المستخدم"
+    },
+    "validation": {
+      "nameRequired": "الاسم الكامل مطلوب",
+      "nameMin": "يجب أن يتكون الاسم من حرفين على الأقل",
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "emailInvalid": "عنوان البريد الإلكتروني غير صالح",
+      "passwordRequired": "كلمة المرور مطلوبة",
+      "passwordMin": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+      "passwordMatch": "يجب أن تتطابق كلمات المرور",
+      "phoneInvalid": "رقم الهاتف غير صالح",
+      "roleRequired": "الدور مطلوب",
+      "userTypeRequired": "نوع المستخدم مطلوب"
+    },
+    "messages": {
+      "createSuccess": "تم إنشاء المستخدم بنجاح",
+      "updateSuccess": "تم تحديث المستخدم بنجاح",
+      "deleteSuccess": "تم حذف المستخدم بنجاح",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
+      "deleteWarning": "لا يمكن التراجع عن هذا الإجراء",
+      "bulkDeleteConfirm": "هل أنت متأكد أنك تريد حذف {count} مستخدمين؟",
+      "exportSuccess": "تم تصدير المستخدمين بنجاح",
+      "error": "حدث خطأ"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط"
+    },
+    "roles": {
+      "admin": "مسؤول",
+      "librarian": "أمين مكتبة",
+      "patron": "مستفيد"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف",
+      "view": "عرض",
+      "export": "تصدير",
+      "bulkDelete": "حذف المحدد",
+      "selected": "{count} محدد"
+    }
+  }
+}
