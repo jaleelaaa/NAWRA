@@ -1,3 +1,7 @@
+"""
+NAWRA Backend API - Vercel Serverless Deployment
+Includes authentication, database connectivity, and debug endpoints
+"""
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
