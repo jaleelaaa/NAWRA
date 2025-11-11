@@ -4,6 +4,7 @@ Includes authentication, database connectivity, and debug endpoints
 """
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 from datetime import datetime
 import sys
 import os
@@ -13,9 +14,85 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.core.config import settings
 
+# API Documentation Metadata
+description = """
+## NAWRA Library Management System API
+
+A comprehensive library management system for managing books, members, borrowing, and reservations.
+
+### Features
+
+* **Authentication** - Secure JWT-based authentication with role-based access control
+* **User Management** - Manage library members and staff accounts
+* **Book Management** - Catalog and organize library resources
+* **Borrowing System** - Track book loans and returns
+* **Reservation System** - Allow members to reserve books
+* **Fine Management** - Calculate and track overdue fines
+* **Activity Tracking** - Monitor library operations and user activities
+
+### Authentication
+
+1. Use the `/api/v1/auth/login` endpoint to obtain access and refresh tokens
+2. Click the 🔓 **Authorize** button at the top right
+3. Enter your access token in the format: `Bearer <your_token>`
+4. Test protected endpoints with your authenticated session
+
+### Test Credentials
+
+For testing purposes, you can use:
+- **Email**: admin@nawra.om
+- **Password**: Admin@123456
+
+---
+Built with ❤️ for NAWRA Library
+"""
+
+tags_metadata = [
+    {
+        "name": "authentication",
+        "description": "User authentication and authorization operations including login, logout, and token management.",
+    },
+    {
+        "name": "users",
+        "description": "User management operations. Manage library members and staff accounts.",
+    },
+    {
+        "name": "books",
+        "description": "Book catalog management. Add, update, and organize library resources.",
+    },
+    {
+        "name": "borrowing",
+        "description": "Book borrowing and return operations. Track loans and manage due dates.",
+    },
+    {
+        "name": "reservations",
+        "description": "Book reservation system. Allow members to reserve available or borrowed books.",
+    },
+    {
+        "name": "fines",
+        "description": "Fine calculation and payment tracking for overdue items.",
+    },
+    {
+        "name": "debug",
+        "description": "Debug and testing endpoints. These should be disabled in production.",
+    },
+]
+
 app = FastAPI(
-    title=settings.APP_NAME,
-    version="1.0.0"
+    title="NAWRA Library Management API",
+    description=description,
+    version="1.0.0",
+    contact={
+        "name": "NAWRA Library",
+        "email": "support@nawra.om",
+    },
+    license_info={
+        "name": "MIT License",
+    },
+    openapi_tags=tags_metadata,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
 
 # Configure CORS
@@ -26,6 +103,34 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Custom OpenAPI schema to add security schemes
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+        tags=tags_metadata,
+    )
+
+    # Add security schemes
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "Enter your JWT token obtained from /api/v1/auth/login"
+        }
+    }
+
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 # Track router loading status
 router_status = {"auth": "not_loaded", "error": None}
@@ -78,17 +183,30 @@ async def health_check():
             "timestamp": datetime.now().isoformat()
         }
 
-@app.get("/api/test")
+@app.get("/api/test", tags=["debug"])
 def test():
+    """
+    Test endpoint to verify the serverless function is working.
+
+    Returns a simple success message with timestamp.
+    """
     return {
         "status": "success",
         "message": "Vercel serverless function is working!",
         "timestamp": datetime.now().isoformat()
     }
 
-@app.get("/api/debug/routes")
+@app.get("/api/debug/routes", tags=["debug"])
 def debug_routes():
-    """Debug endpoint to see all available routes"""
+    """
+    List all available API routes.
+
+    Returns information about all registered routes including:
+    - Path
+    - HTTP methods
+    - Route name
+    - Router loading status
+    """
     routes = []
     for route in app.routes:
         if hasattr(route, "methods") and hasattr(route, "path"):
@@ -103,9 +221,18 @@ def debug_routes():
         "routes": routes
     }
 
-@app.post("/api/debug/create-test-user")
+@app.post("/api/debug/create-test-user", tags=["debug"])
 async def create_test_user():
-    """Create a test user for testing login functionality"""
+    """
+    Create a test user for testing login functionality.
+
+    Creates an admin user with email admin@nawra.om and password Admin@123456.
+
+    Returns:
+    - If user exists: Returns existing user information
+    - If created: Returns newly created user information
+    - If error: Returns error details
+    """
     try:
         from app.db.supabase_client import get_supabase
         from app.core.security import get_password_hash
@@ -160,9 +287,17 @@ async def create_test_user():
             "message": "Failed to create test user"
         }
 
-@app.post("/api/debug/reset-test-password")
+@app.post("/api/debug/reset-test-password", tags=["debug"])
 async def reset_test_password():
-    """Reset test user password to Admin@123456"""
+    """
+    Reset test user password to Admin@123456.
+
+    Useful when you need to reset the test admin account password.
+
+    Returns:
+    - Success: Confirmation that password was reset
+    - Error: User not found or reset failed
+    """
     try:
         from app.db.supabase_client import get_supabase
         from app.core.security import get_password_hash
