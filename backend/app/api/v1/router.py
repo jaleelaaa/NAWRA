@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .endpoints import auth
+from .endpoints import auth, analytics, dashboard
 
 api_router = APIRouter(prefix="/v1")
 
@@ -13,6 +13,8 @@ async def health():
 
 # Include routers for different modules
 api_router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+api_router.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
+api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
 
 # We'll add these as we build each feature
 # api_router.include_router(users.router, prefix="/users", tags=["Users"])

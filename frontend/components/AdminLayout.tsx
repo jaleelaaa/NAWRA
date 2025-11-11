@@ -78,11 +78,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Sidebar */}
       <aside
+        style={{
+          right: isRTL ? '0' : 'auto',
+          left: isRTL ? 'auto' : '0',
+        }}
         className={`${
           sidebarOpen ? 'translate-x-0' : isRTL ? 'translate-x-full' : '-translate-x-full'
-        } fixed lg:translate-x-0 ${
-          isRTL ? 'right-0' : 'left-0'
-        } top-0 h-screen w-72 bg-white shadow-xl transition-transform duration-300 z-50 lg:z-30 overflow-y-auto flex flex-col border-r border-gray-200`}
+        } fixed lg:translate-x-0 top-0 h-screen w-72 bg-white shadow-xl transition-transform duration-300 z-50 lg:z-30 overflow-y-auto flex flex-col border-r border-gray-200`}
       >
         {/* Sidebar Header */}
         <div className={`px-6 py-6 border-b border-gray-200 ${isRTL ? 'text-right' : ''}`}>
@@ -145,7 +147,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content Area */}
-      <div className={`${isRTL ? 'lg:mr-72' : 'lg:ml-72'} min-h-screen`}>
+      <div
+        style={{
+          marginRight: isRTL ? '288px' : '0',
+          marginLeft: isRTL ? '0' : '288px',
+        }}
+        className="min-h-screen max-lg:!ml-0 max-lg:!mr-0"
+      >
         {/* Top Header */}
         <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
           <div className="px-4 sm:px-6 lg:px-8 py-4">

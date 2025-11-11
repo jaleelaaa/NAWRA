@@ -59,7 +59,10 @@ export default function StatCard({
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4" style={{ borderLeftColor: getHexColor(color) }}>
+    <Card
+      className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${isRTL ? 'border-r-4' : 'border-l-4'}`}
+      style={isRTL ? { borderRightColor: getHexColor(color) } : { borderLeftColor: getHexColor(color) }}
+    >
       <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2">
         <CardTitle className="text-xs md:text-sm font-medium text-gray-600">{title}</CardTitle>
         <div className={`p-1.5 md:p-2 rounded-lg ${bgColor} transition-transform hover:scale-110 duration-300`}>

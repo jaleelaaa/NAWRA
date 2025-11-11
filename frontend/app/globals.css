@@ -58,13 +58,34 @@
   }
 }
 
-/* RTL Support */
+/* RTL Support - Enhanced */
+html[dir="rtl"],
+html[dir="rtl"] body {
+  direction: rtl !important;
+  text-align: right;
+}
+
+html[dir="ltr"],
+html[dir="ltr"] body {
+  direction: ltr !important;
+  text-align: left;
+}
+
 [dir="rtl"] {
   direction: rtl;
 }
 
 [dir="ltr"] {
   direction: ltr;
+}
+
+/* RTL-aware flexbox utilities */
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row;
 }
 
 /* Custom scrollbar */
@@ -83,4 +104,31 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-foreground/60;
+}
+
+/* Scrolling text animation for welcome banner */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 20s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 20s linear infinite;
 }

@@ -13,7 +13,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  // Statistics data with sparkline data
+  // Statistics data with sparkline data (using mock data for now)
   const stats = [
     {
       title: locale === 'ar' ? 'إجمالي المستخدمين' : 'Total Users',
@@ -107,22 +107,22 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           <div className="hidden md:block absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-white opacity-5 rounded-full -mr-16 -mt-16 md:-mr-32 md:-mt-32 animate-pulse"></div>
           <div className="hidden md:block absolute bottom-0 left-0 w-24 h-24 md:w-48 md:h-48 bg-white opacity-5 rounded-full -ml-12 -mb-12 md:-ml-24 md:-mb-24 animate-pulse"></div>
 
-          <div className="relative z-10 text-center overflow-hidden">
+          <div className="relative z-10 text-center">
             <h1 className="text-lg md:text-xl lg:text-2xl font-bold mb-2 md:mb-3">
               {locale === 'ar' ? 'مرحباً بك في لوحة التحكم' : 'Welcome to the Dashboard'}
             </h1>
             <div className="relative overflow-hidden whitespace-nowrap">
               <div className={`inline-block ${locale === 'ar' ? 'animate-scroll-right' : 'animate-scroll-left'}`}>
-                <p className="text-white/90 text-xs md:text-sm lg:text-base inline-block px-4">
+                <span className="text-white/90 text-xs md:text-sm lg:text-base inline-block px-8">
                   {locale === 'ar'
                     ? 'نظام إدارة المكتبة NAWRA - وزارة التربية والتعليم، سلطنة عمان'
                     : 'NAWRA Library Management System - Ministry of Education, Sultanate of Oman'}
-                </p>
-                <p className="text-white/90 text-xs md:text-sm lg:text-base inline-block px-4">
+                </span>
+                <span className="text-white/90 text-xs md:text-sm lg:text-base inline-block px-8">
                   {locale === 'ar'
                     ? 'نظام إدارة المكتبة NAWRA - وزارة التربية والتعليم، سلطنة عمان'
                     : 'NAWRA Library Management System - Ministry of Education, Sultanate of Oman'}
-                </p>
+                </span>
               </div>
             </div>
           </div>
