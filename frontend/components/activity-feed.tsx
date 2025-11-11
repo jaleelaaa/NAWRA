@@ -75,7 +75,7 @@ const ActivityFeed: React.FC = () => {
                 </p>
                 {activity.book && (
                   <p className="text-base text-gray-700 mt-2">
-                    <span className="font-medium italic">"{activity.book}"</span>
+                    <span className="font-medium italic">&quot;{activity.book}&quot;</span>
                   </p>
                 )}
                 <p className="text-sm text-gray-500 mt-3 font-medium">{activity.time}</p>
