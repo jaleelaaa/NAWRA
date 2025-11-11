@@ -96,11 +96,11 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   return (
     <AdminLayout>
       <ErrorBoundary>
-        <div className="space-y-2">
+        <div className="space-y-3 md:space-y-4">
         {/* Welcome Banner */}
         <section
           aria-label={locale === 'ar' ? 'لافتة الترحيب' : 'Welcome banner'}
-          className="bg-gradient-to-r from-[#8B2635] via-[#A03045] to-[#8B2635] rounded-xl p-3 md:p-4 lg:p-5 text-white shadow-xl relative overflow-hidden animate-scale-in"
+          className="bg-gradient-to-r from-[#8B2635] via-[#A03045] to-[#8B2635] rounded-xl p-3 md:p-4 text-white shadow-xl relative overflow-hidden animate-scale-in"
           style={{ backgroundSize: '200% 200%' }}
         >
           {/* Decorative elements with animations */}
@@ -129,7 +129,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
         </section>
 
         {/* Statistics Cards */}
-        <section aria-label={locale === 'ar' ? 'إحصائيات النظام' : 'System statistics'} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+        <section aria-label={locale === 'ar' ? 'إحصائيات النظام' : 'System statistics'} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {stats.map((stat, index) => (
             <StatCard
               key={index}
@@ -153,7 +153,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
         </section>
 
         {/* Two Column Layout: Popular Books & Overdue Alerts */}
-        <section aria-label={locale === 'ar' ? 'الكتب الشائعة والتنبيهات' : 'Popular books and alerts'} className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-4">
+        <section aria-label={locale === 'ar' ? 'الكتب الشائعة والتنبيهات' : 'Popular books and alerts'} className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
           <PopularBooks locale={locale} />
           <OverdueAlerts locale={locale} />
         </section>

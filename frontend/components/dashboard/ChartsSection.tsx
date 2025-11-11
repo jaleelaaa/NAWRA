@@ -63,98 +63,124 @@ export default function ChartsSection({ locale }: ChartsSectionProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
       {/* Borrowing Trends Line Chart */}
       <Card className="col-span-1 lg:col-span-2">
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl font-bold">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base md:text-lg font-bold">
             {locale === 'ar' ? 'اتجاهات الاستعارة والإرجاع' : 'Borrowing & Return Trends'}
           </CardTitle>
-          <p className="text-xs md:text-sm text-gray-500">
+          <p className="text-xs text-gray-500">
             {locale === 'ar' ? 'آخر 30 يوماً' : 'Last 30 days'}
           </p>
         </CardHeader>
-        <CardContent>
-          <div className="h-[180px] md:h-[200px]">
+        <CardContent className="pt-0">
+          <div className="h-[200px] md:h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={borrowingTrendsData}>
+              <LineChart data={borrowingTrendsData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="date" stroke="#6B7280" style={{ fontSize: '10px' }} />
-                <YAxis stroke="#6B7280" style={{ fontSize: '10px' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#FFF',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '8px',
-                }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="borrowed"
-                name={locale === 'ar' ? 'مُستعار' : 'Borrowed'}
-                stroke="#8B2635"
-                strokeWidth={3}
-                dot={{ fill: '#8B2635', r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="returned"
-                name={locale === 'ar' ? 'مُرجع' : 'Returned'}
-                stroke="#10B981"
-                strokeWidth={3}
-                dot={{ fill: '#10B981', r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+                <XAxis
+                  dataKey="date"
+                  stroke="#374151"
+                  style={{ fontSize: '12px', fontWeight: '600' }}
+                  tick={{ fill: '#374151' }}
+                />
+                <YAxis
+                  stroke="#374151"
+                  style={{ fontSize: '12px', fontWeight: '600' }}
+                  tick={{ fill: '#374151' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#FFF',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontWeight: '500',
+                  }}
+                />
+                <Legend
+                  wrapperStyle={{ fontWeight: '600', fontSize: '13px' }}
+                  iconType="circle"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="borrowed"
+                  name={locale === 'ar' ? 'مُستعار' : 'Borrowed'}
+                  stroke="#8B2635"
+                  strokeWidth={3}
+                  dot={{ fill: '#8B2635', r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="returned"
+                  name={locale === 'ar' ? 'مُرجع' : 'Returned'}
+                  stroke="#10B981"
+                  strokeWidth={3}
+                  dot={{ fill: '#10B981', r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
 
       {/* Book Categories Bar Chart */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl font-bold">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base md:text-lg font-bold">
             {locale === 'ar' ? 'الكتب حسب الفئة' : 'Books by Category'}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-[180px] md:h-[220px]">
+        <CardContent className="pt-0">
+          <div className="h-[220px] md:h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categoriesData}>
+              <BarChart data={categoriesData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="category" stroke="#6B7280" style={{ fontSize: '9px' }} />
-                <YAxis stroke="#6B7280" style={{ fontSize: '10px' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#FFF',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '8px',
-                }}
-              />
-              <Bar
-                dataKey="count"
-                fill="#8B2635"
-                radius={[8, 8, 0, 0]}
-                name={locale === 'ar' ? 'عدد الكتب' : 'Book Count'}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+                <XAxis
+                  dataKey="category"
+                  stroke="#374151"
+                  style={{ fontSize: '11px', fontWeight: '600' }}
+                  tick={{ fill: '#374151' }}
+                  angle={locale === 'ar' ? 0 : -15}
+                  textAnchor={locale === 'ar' ? 'middle' : 'end'}
+                  height={60}
+                />
+                <YAxis
+                  stroke="#374151"
+                  style={{ fontSize: '12px', fontWeight: '600' }}
+                  tick={{ fill: '#374151' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#FFF',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontWeight: '500',
+                  }}
+                />
+                <Bar
+                  dataKey="count"
+                  fill="#8B2635"
+                  radius={[8, 8, 0, 0]}
+                  name={locale === 'ar' ? 'عدد الكتب' : 'Book Count'}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
 
       {/* User Types Pie Chart */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl font-bold">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base md:text-lg font-bold">
             {locale === 'ar' ? 'توزيع المستخدمين' : 'User Distribution'}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-[180px] md:h-[220px]">
+        <CardContent className="pt-0">
+          <div className="h-[220px] md:h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -163,62 +189,80 @@ export default function ChartsSection({ locale }: ChartsSectionProps) {
                   cy="50%"
                   labelLine={false}
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {userTypesData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+                  outerRadius={90}
+                  fill="#8884d8"
+                  dataKey="value"
+                  style={{ fontSize: '13px', fontWeight: '600' }}
+                >
+                  {userTypesData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#FFF',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontWeight: '500',
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
 
       {/* Monthly Circulation Area Chart */}
       <Card className="col-span-1 lg:col-span-2">
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl font-bold">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base md:text-lg font-bold">
             {locale === 'ar' ? 'إحصائيات التداول الشهرية' : 'Monthly Circulation Statistics'}
           </CardTitle>
-          <p className="text-xs md:text-sm text-gray-500">
+          <p className="text-xs text-gray-500">
             {locale === 'ar' ? 'آخر 6 أشهر' : 'Last 6 months'}
           </p>
         </CardHeader>
-        <CardContent>
-          <div className="h-[150px] md:h-[180px]">
+        <CardContent className="pt-0">
+          <div className="h-[180px] md:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={circulationData}>
-              <defs>
-                <linearGradient id="colorCirculation" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8B2635" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#8B2635" stopOpacity={0.1} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '10px' }} />
-              <YAxis stroke="#6B7280" style={{ fontSize: '10px' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#FFF',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '8px',
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="circulation"
-                stroke="#8B2635"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorCirculation)"
-                name={locale === 'ar' ? 'التداول' : 'Circulation'}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+              <AreaChart data={circulationData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="colorCirculation" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8B2635" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#8B2635" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis
+                  dataKey="month"
+                  stroke="#374151"
+                  style={{ fontSize: '12px', fontWeight: '600' }}
+                  tick={{ fill: '#374151' }}
+                />
+                <YAxis
+                  stroke="#374151"
+                  style={{ fontSize: '12px', fontWeight: '600' }}
+                  tick={{ fill: '#374151' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#FFF',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontWeight: '500',
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="circulation"
+                  stroke="#8B2635"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorCirculation)"
+                  name={locale === 'ar' ? 'التداول' : 'Circulation'}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
