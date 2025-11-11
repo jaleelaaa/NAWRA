@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations, useLocale } from 'next-intl';
