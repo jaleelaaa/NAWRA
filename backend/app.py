@@ -6,17 +6,26 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 from datetime import datetime
+import sys
+import traceback
 
-from app.core.config import settings
-from app.api.v1.router import api_router
-from app.db.supabase_client import get_supabase
-
-# Configure logging
+# Configure logging first
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+# Import application modules with error handling
+try:
+    from app.core.config import settings
+    from app.api.v1.router import api_router
+    from app.db.supabase_client import get_supabase
+    logger.info("✓ Application modules loaded successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to import application modules: {str(e)}")
+    logger.error(traceback.format_exc())
+    raise
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -27,17 +36,34 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+@app.on_event("startup")
+async def startup_event():
+    """Log successful startup"""
+    logger.info("🚀 NAWRA Backend started successfully on Vercel serverless")
+    logger.info(f"Environment: {settings.ENVIRONMENT}")
+    logger.info(f"CORS Origins: {settings.CORS_ORIGINS}")
+
 # CORS Configuration
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+try:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    logger.info("✓ CORS middleware configured")
+except Exception as e:
+    logger.error(f"❌ Failed to configure CORS: {str(e)}")
+    raise
 
 # Include API router
-app.include_router(api_router, prefix="/api")
+try:
+    app.include_router(api_router, prefix="/api")
+    logger.info("✓ API router included")
+except Exception as e:
+    logger.error(f"❌ Failed to include API router: {str(e)}")
+    raise
 
 
 @app.get("/")
