@@ -23,12 +23,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Track router loading status
+router_status = {"auth": "not_loaded", "error": None}
+
 # Include routers
 try:
     from app.api.v1.endpoints import auth
     app.include_router(auth.router, prefix="/api/v1/auth", tags=["authentication"])
+    router_status["auth"] = "loaded"
 except Exception as e:
+    router_status["error"] = str(e)
     print(f"Warning: Could not load auth router: {e}")
+    import traceback
+    traceback.print_exc()
 
 @app.get("/")
 def read_root():
@@ -73,4 +80,21 @@ def test():
         "status": "success",
         "message": "Vercel serverless function is working!",
         "timestamp": datetime.now().isoformat()
+    }
+
+@app.get("/api/debug/routes")
+def debug_routes():
+    """Debug endpoint to see all available routes"""
+    routes = []
+    for route in app.routes:
+        if hasattr(route, "methods") and hasattr(route, "path"):
+            routes.append({
+                "path": route.path,
+                "methods": list(route.methods),
+                "name": route.name
+            })
+    return {
+        "router_status": router_status,
+        "total_routes": len(routes),
+        "routes": routes
     }
