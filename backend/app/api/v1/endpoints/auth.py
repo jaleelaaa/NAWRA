@@ -1,16 +1,20 @@
 """
 Authentication endpoints
 """
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from ....models.auth import LoginRequest, LoginResponse, UserResponse, TokenResponse
 from ....services.auth_service import AuthService
 
 router = APIRouter()
-auth_service = AuthService()
+
+
+def get_auth_service() -> AuthService:
+    """Dependency to get auth service instance"""
+    return AuthService()
 
 
 @router.post("/login", response_model=LoginResponse, summary="User login")
-async def login(login_data: LoginRequest):
+async def login(login_data: LoginRequest, auth_service: AuthService = Depends(get_auth_service)):
     """
     Authenticate user and return JWT tokens
 
