@@ -16,14 +16,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Import application modules with error handling
+# Import settings first
 try:
     from app.core.config import settings
-    from app.api.v1.router import api_router
-    from app.db.supabase_client import get_supabase
-    logger.info("✓ Application modules loaded successfully")
+    logger.info("✓ Settings loaded successfully")
 except Exception as e:
-    logger.error(f"❌ Failed to import application modules: {str(e)}")
+    logger.error(f"❌ Failed to import settings: {str(e)}")
     logger.error(traceback.format_exc())
     raise
 
@@ -38,10 +36,20 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup_event():
-    """Log successful startup"""
-    logger.info("🚀 NAWRA Backend started successfully on Vercel serverless")
+    """Log successful startup and load API routes"""
+    logger.info("🚀 NAWRA Backend starting on Vercel serverless")
     logger.info(f"Environment: {settings.ENVIRONMENT}")
     logger.info(f"CORS Origins: {settings.CORS_ORIGINS}")
+
+    # Import and include API router during startup, not at module level
+    try:
+        from app.api.v1.router import api_router
+        app.include_router(api_router, prefix="/api")
+        logger.info("✓ API router loaded and included")
+    except Exception as e:
+        logger.error(f"❌ Failed to load API router: {str(e)}")
+        logger.error(traceback.format_exc())
+        # Don't raise - allow app to start without API routes for debugging
 
 # CORS Configuration
 try:
@@ -55,14 +63,6 @@ try:
     logger.info("✓ CORS middleware configured")
 except Exception as e:
     logger.error(f"❌ Failed to configure CORS: {str(e)}")
-    raise
-
-# Include API router
-try:
-    app.include_router(api_router, prefix="/api")
-    logger.info("✓ API router included")
-except Exception as e:
-    logger.error(f"❌ Failed to include API router: {str(e)}")
     raise
 
 
@@ -90,10 +90,13 @@ async def health_check():
     db_error = None
 
     try:
+        # Lazy import to avoid module-level import issues
+        from app.db.supabase_client import get_supabase
         supabase = get_supabase()
         # Perform a lightweight query to verify connection
         result = supabase.table('roles').select('id').limit(1).execute()
         db_status = "healthy"
+        logger.info("✓ Database connection healthy")
     except Exception as e:
         db_status = "unhealthy"
         db_error = str(e)
