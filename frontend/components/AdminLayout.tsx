@@ -138,7 +138,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 font-medium"
           >
             {!isRTL && <LogOut size={20} />}
-            <span className="flex-1">{locale === 'ar' ? 'تسجيل الخروج' : 'Logout'}</span>
+            <span className="flex-1">{t('nav.logout')}</span>
             {isRTL && <LogOut size={20} />}
           </button>
         </div>
@@ -193,16 +193,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-56">
                     <DropdownMenuLabel className={isRTL ? 'text-right' : ''}>
-                      {locale === 'ar' ? 'حسابي' : 'My Account'}
+                      {t('nav.myAccount')}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className={isRTL ? 'flex-row-reverse' : ''}>
                       <User className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      <span>{locale === 'ar' ? 'الملف الشخصي' : 'Profile'}</span>
+                      <span>{t('nav.profile')}</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem className={isRTL ? 'flex-row-reverse' : ''}>
                       <Settings className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      <span>{locale === 'ar' ? 'الإعدادات' : 'Settings'}</span>
+                      <span>{t('nav.settings')}</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -210,7 +210,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       className={`text-red-600 ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <LogOut className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      <span>{locale === 'ar' ? 'تسجيل الخروج' : 'Logout'}</span>
+                      <span>{t('nav.logout')}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

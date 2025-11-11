@@ -11,7 +11,10 @@
     "catalog": "الفهرس",
     "circulation": "الإعارات",
     "reports": "التقارير",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "myAccount": "حسابي",
+    "profile": "الملف الشخصي"
   },
   "login": {
     "title": "تسجيل الدخول إلى حسابك",

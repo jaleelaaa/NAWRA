@@ -11,7 +11,10 @@
     "catalog": "Catalog",
     "circulation": "Circulation",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "logout": "Logout",
+    "myAccount": "My Account",
+    "profile": "Profile"
   },
   "login": {
     "title": "Sign In to Your Account",
