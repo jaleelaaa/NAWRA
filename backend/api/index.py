@@ -23,6 +23,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include routers
+try:
+    from app.api.v1.endpoints import auth
+    app.include_router(auth.router, prefix="/api/v1/auth", tags=["authentication"])
+except Exception as e:
+    print(f"Warning: Could not load auth router: {e}")
+
 @app.get("/")
 def read_root():
     return {

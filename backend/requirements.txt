@@ -1,5 +1,9 @@
-# Phase 1: Core dependencies for Vercel serverless deployment
+# Phase 1-2: Core dependencies for Vercel serverless deployment
 fastapi==0.115.4
 pydantic-settings==2.6.1
 supabase==2.10.0
 python-dotenv==1.0.1
+
+# Phase 2: Authentication dependencies
+bcrypt==4.2.1
+python-jose[cryptography]==3.3.0
