@@ -2,11 +2,11 @@
 
 // Force dynamic rendering - don't pre-render at build time
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations, useLocale } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
 import {
   Search,
   Plus,
