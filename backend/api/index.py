@@ -98,3 +98,60 @@ def debug_routes():
         "total_routes": len(routes),
         "routes": routes
     }
+
+@app.post("/api/debug/create-test-user")
+async def create_test_user():
+    """Create a test user for testing login functionality"""
+    try:
+        from app.db.supabase_client import get_supabase
+        from app.core.security import get_password_hash
+
+        supabase = get_supabase()
+
+        # Check if test user already exists
+        existing = supabase.table('users').select("*").eq('email', 'admin@nawra.om').execute()
+
+        if existing.data and len(existing.data) > 0:
+            return {
+                "status": "exists",
+                "message": "Test user already exists",
+                "user": {
+                    "email": "admin@nawra.om",
+                    "password": "Admin@123456"
+                }
+            }
+
+        # Get admin role ID
+        role_response = supabase.table('roles').select("id").eq('name', 'Admin').execute()
+        role_id = role_response.data[0]['id'] if role_response.data else None
+
+        # Create test user
+        password_hash = get_password_hash("Admin@123456")
+
+        new_user = {
+            "email": "admin@nawra.om",
+            "password_hash": password_hash,
+            "full_name": "Test Admin",
+            "role_id": role_id,
+            "user_type": "Staff",
+            "is_active": True,
+            "created_at": datetime.utcnow().isoformat()
+        }
+
+        result = supabase.table('users').insert(new_user).execute()
+
+        return {
+            "status": "created",
+            "message": "Test user created successfully",
+            "user": {
+                "email": "admin@nawra.om",
+                "password": "Admin@123456",
+                "full_name": "Test Admin"
+            }
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "Failed to create test user"
+        }
