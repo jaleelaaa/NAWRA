@@ -1,7 +1,27 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+import sys
+import os
 
-app = FastAPI()
+# Add parent directory to path to import app modules
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app.core.config import settings
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    version="1.0.0"
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS if isinstance(settings.CORS_ORIGINS, list) else [settings.CORS_ORIGINS],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
@@ -12,6 +32,33 @@ def read_root():
         "deployment": "vercel-serverless",
         "timestamp": datetime.now().isoformat()
     }
+
+@app.get("/api/health")
+async def health_check():
+    """Health check endpoint with database connectivity test"""
+    try:
+        # Lazy import to avoid cold start issues
+        from app.db.supabase_client import get_supabase
+
+        # Test database connection
+        supabase = get_supabase()
+
+        # Simple query to test connection
+        response = supabase.table('users').select("id").limit(1).execute()
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "timestamp": datetime.now().isoformat(),
+            "environment": settings.ENVIRONMENT
+        }
+    except Exception as e:
+        return {
+            "status": "degraded",
+            "database": "disconnected",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
+        }
 
 @app.get("/api/test")
 def test():

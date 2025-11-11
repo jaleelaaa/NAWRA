@@ -1,2 +1,5 @@
-# Minimal dependencies for Vercel serverless deployment
+# Phase 1: Core dependencies for Vercel serverless deployment
 fastapi==0.115.4
+pydantic-settings==2.6.1
+supabase==2.10.0
+python-dotenv==1.0.1
