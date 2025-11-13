@@ -3,12 +3,20 @@
     "appName": "NAWRA - Library Management System",
     "loading": "Loading...",
     "error": "An error occurred",
-    "success": "Success"
+    "success": "Success",
+    "close": "Close",
+    "optional": "(optional)",
+    "notAvailable": "N/A",
+    "comingSoon": "Coming soon",
+    "user": "User",
+    "staff": "Staff",
+    "defaultUser": "User",
+    "defaultRole": "Staff"
   },
   "nav": {
     "dashboard": "Dashboard",
     "users": "Users",
-    "catalog": "Catalog",
+    "catalog": "Books",
     "circulation": "Circulation",
     "reports": "Reports",
     "settings": "Settings",
@@ -59,16 +67,41 @@
     "editUser": "Edit User",
     "deleteUser": "Delete User",
     "viewDetails": "View Details",
-    "searchPlaceholder": "Search by name or email...",
+    "searchPlaceholder": "Search users... | ابحث عن المستخدمين",
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeUsers": "Active Users",
+      "pending": "Pending",
+      "inactive": "Inactive",
+      "thisMonth": "this month"
+    },
     "filters": {
       "all": "All Users",
+      "allRoles": "All Roles",
+      "allStatus": "All Status",
       "active": "Active",
       "inactive": "Inactive",
+      "pending": "Pending",
       "staff": "Staff",
       "patron": "Patron",
       "role": "Role",
       "userType": "User Type",
-      "status": "Status"
+      "status": "Status",
+      "activeFilters": "Active filters:",
+      "clearFilter": "Clear"
+    },
+    "view": {
+      "grid": "Grid View",
+      "table": "Table View"
+    },
+    "sort": {
+      "sortBy": "Sort By",
+      "sort": "Sort",
+      "name": "Name",
+      "email": "Email",
+      "dateCreated": "Date Created",
+      "lastLogin": "Last Login",
+      "role": "Role"
     },
     "table": {
       "name": "Name",
@@ -79,15 +112,32 @@
       "createdAt": "Created",
       "actions": "Actions",
       "noUsers": "No users found",
-      "showing": "Showing"
+      "showing": "Showing",
+      "lastActive": "Last Active"
+    },
+    "sections": {
+      "personalInfo": "Personal Information",
+      "accountInfo": "Account Information"
+    },
+    "card": {
+      "books": "Books",
+      "fines": "Fines",
+      "lastLogin": "Last Login",
+      "userId": "ID",
+      "message": "Message",
+      "online": "Online",
+      "offline": "Offline"
     },
     "form": {
-      "fullName": "Full Name",
+      "fullName": "Full Name (English)",
       "fullNamePlaceholder": "Enter full name",
+      "arabicName": "Full Name (Arabic)",
+      "arabicNamePlaceholder": "أدخل الاسم الكامل",
       "email": "Email Address",
       "emailPlaceholder": "user@ministry.om",
       "password": "Password",
       "passwordPlaceholder": "Enter secure password",
+      "passwordHint": "Must be at least 8 characters",
       "confirmPassword": "Confirm Password",
       "confirmPasswordPlaceholder": "Re-enter password",
       "phone": "Phone Number",
@@ -103,8 +153,18 @@
       "isActive": "Active Status",
       "cancel": "Cancel",
       "save": "Save",
+      "saveChanges": "Save Changes",
       "create": "Create User",
-      "update": "Update User"
+      "createUser": "Create User",
+      "update": "Update User",
+      "userId": "User ID",
+      "userIdPlaceholder": "OM-2024-001",
+      "booksBorrowed": "Books Borrowed",
+      "outstandingFines": "Outstanding Fines",
+      "addNewUserDescription": "Create a new user account for the library system",
+      "updateUserDescription": "Update user information and permissions",
+      "lastUpdated": "Last Updated",
+      "keepCurrentPassword": "Leave blank to keep the current password"
     },
     "validation": {
       "nameRequired": "Full name is required",
@@ -125,25 +185,139 @@
       "deleteConfirm": "Are you sure you want to delete this user?",
       "deleteWarning": "This action cannot be undone",
       "bulkDeleteConfirm": "Are you sure you want to delete {count} users?",
+      "bulkDeleteSuccess": "Successfully deleted {count} user(s)",
+      "bulkActivateSuccess": "Successfully activated {count} user(s)",
+      "bulkDeactivateSuccess": "Successfully deactivated {count} user(s)",
       "exportSuccess": "Users exported successfully",
       "error": "An error occurred"
     },
     "status": {
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "pending": "Pending"
     },
     "roles": {
-      "admin": "Administrator",
-      "librarian": "Librarian",
-      "patron": "Patron"
+      "admin": "ADMIN",
+      "administrator": "ADMINISTRATOR",
+      "librarian": "LIBRARIAN",
+      "cataloger": "CATALOGER",
+      "circulation_staff": "CIRCULATION STAFF",
+      "patron": "PATRON",
+      "student": "STUDENT",
+      "teacher": "TEACHER",
+      "adminFull": "Administrator - المسؤول",
+      "librarianFull": "Librarian - أمين المكتبة",
+      "teacherFull": "Teacher - معلم",
+      "studentFull": "Student - طالب"
+    },
+    "pagination": {
+      "showingResults": "Showing {start}-{end} of {total} users",
+      "itemsPerPage": "Items per page:",
+      "previous": "Previous",
+      "next": "Next"
     },
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
+      "deleting": "Deleting",
       "view": "View",
       "export": "Export",
       "bulkDelete": "Delete Selected",
-      "selected": "{count} selected"
+      "selected": "{count} selected",
+      "message": "Message",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "select": "Select",
+      "exitSelectionMode": "Exit Selection Mode",
+      "enterSelectionMode": "Enter Selection Mode"
+    },
+    "notifications": {
+      "success": "Success",
+      "error": "Error",
+      "info": "Information",
+      "userCreated": "User created successfully",
+      "userUpdated": "User updated successfully",
+      "userDeleted": "User deleted successfully",
+      "exporting": "Exporting users...",
+      "exportSuccess": "Users exported successfully"
+    },
+    "confirmations": {
+      "deleteTitle": "Delete User",
+      "deleteUser": "Are you sure you want to delete this user? This action cannot be undone."
+    },
+    "noResults": "No users found",
+    "noResultsDescription": "Try adjusting your filters or search query",
+    "retry": "Retry"
+  },
+  "dashboard": {
+    "stats": {
+      "systemStatistics": "System Statistics",
+      "failedToLoad": "Failed to load statistics",
+      "totalUsers": "Total Users",
+      "totalBooks": "Total Books",
+      "activeLoans": "Active Loans",
+      "overdueItems": "Overdue Items",
+      "booksBorrowed": "Books Borrowed",
+      "overdueBooks": "Overdue Books",
+      "newMembersThisMonth": "New Members This Month",
+      "booksAddedThisMonth": "Books Added This Month",
+      "comparedToLastMonth": "Compared to last month"
+    }
+  },
+  "books": {
+    "title": "Library Collection",
+    "subtitle": "Explore our curated Omani and Arabic literature collection",
+    "addBook": "Add Book",
+    "import": "Import",
+    "export": "Export",
+    "searchPlaceholder": "Search books by title, author, ISBN...",
+    "noBooks": "No books found",
+    "tryAdjusting": "Try adjusting your search or filters",
+    "showingBooks": "Showing {count} of {total} books",
+    "stats": {
+      "totalBooks": "Total Books",
+      "available": "Available",
+      "borrowed": "Borrowed",
+      "overdue": "Overdue",
+      "vsLastMonth": "vs last month"
+    },
+    "filters": {
+      "allCategories": "All Categories",
+      "allStatus": "All Status",
+      "clear": "Clear"
+    },
+    "status": {
+      "available": "Available",
+      "borrowed": "Borrowed",
+      "reserved": "Reserved",
+      "damaged": "Damaged",
+      "underRepair": "Under Repair"
+    },
+    "categories": {
+      "history": "History",
+      "literature": "Literature",
+      "poetry": "Poetry",
+      "culture": "Culture",
+      "reference": "Reference",
+      "business": "Business",
+      "geography": "Geography",
+      "philosophy": "Philosophy",
+      "environment": "Environment"
+    },
+    "card": {
+      "details": "Details",
+      "view": "View",
+      "favorite": "Favorite",
+      "due": "Due",
+      "copies": "copies",
+      "reviews": "reviews",
+      "newArrival": "NEW"
+    },
+    "actions": {
+      "addToCart": "Add to Cart",
+      "borrow": "Borrow",
+      "reserve": "Reserve",
+      "viewDetails": "View Details"
     }
   }
 }

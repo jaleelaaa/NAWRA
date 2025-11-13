@@ -3,12 +3,20 @@
     "appName": "نورة - نظام إدارة المكتبة",
     "loading": "جار التحميل...",
     "error": "حدث خطأ",
-    "success": "تم بنجاح"
+    "success": "تم بنجاح",
+    "close": "إغلاق",
+    "optional": "(اختياري)",
+    "notAvailable": "غير متوفر",
+    "comingSoon": "قريباً",
+    "user": "مستخدم",
+    "staff": "موظف",
+    "defaultUser": "مستخدم",
+    "defaultRole": "موظف"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
     "users": "المستخدمون",
-    "catalog": "الفهرس",
+    "catalog": "الكتب",
     "circulation": "الإعارات",
     "reports": "التقارير",
     "settings": "الإعدادات",
@@ -59,16 +67,41 @@
     "editUser": "تعديل المستخدم",
     "deleteUser": "حذف المستخدم",
     "viewDetails": "عرض التفاصيل",
-    "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني...",
+    "searchPlaceholder": "ابحث عن المستخدمين... | Search users",
+    "stats": {
+      "totalUsers": "إجمالي المستخدمين",
+      "activeUsers": "المستخدمون النشطون",
+      "pending": "قيد الانتظار",
+      "inactive": "غير نشط",
+      "thisMonth": "هذا الشهر"
+    },
     "filters": {
       "all": "جميع المستخدمين",
+      "allRoles": "كل الأدوار",
+      "allStatus": "كل الحالات",
       "active": "نشط",
       "inactive": "غير نشط",
+      "pending": "قيد الانتظار",
       "staff": "موظف",
       "patron": "مستفيد",
       "role": "الدور",
       "userType": "نوع المستخدم",
-      "status": "الحالة"
+      "status": "الحالة",
+      "activeFilters": "التصفيات النشطة:",
+      "clearFilter": "مسح"
+    },
+    "view": {
+      "grid": "عرض الشبكة",
+      "table": "عرض الجدول"
+    },
+    "sort": {
+      "sortBy": "ترتيب حسب",
+      "sort": "ترتيب",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "dateCreated": "تاريخ الإنشاء",
+      "lastLogin": "آخر دخول",
+      "role": "الدور"
     },
     "table": {
       "name": "الاسم",
@@ -79,15 +112,32 @@
       "createdAt": "تاريخ الإنشاء",
       "actions": "الإجراءات",
       "noUsers": "لم يتم العثور على مستخدمين",
-      "showing": "عرض"
+      "showing": "عرض",
+      "lastActive": "آخر نشاط"
+    },
+    "sections": {
+      "personalInfo": "المعلومات الشخصية",
+      "accountInfo": "معلومات الحساب"
+    },
+    "card": {
+      "books": "الكتب",
+      "fines": "الغرامات",
+      "lastLogin": "آخر دخول",
+      "userId": "المعرف",
+      "message": "رسالة",
+      "online": "متصل",
+      "offline": "غير متصل"
     },
     "form": {
-      "fullName": "الاسم الكامل",
-      "fullNamePlaceholder": "أدخل الاسم الكامل",
+      "fullName": "الاسم الكامل (بالإنجليزية)",
+      "fullNamePlaceholder": "Enter full name",
+      "arabicName": "الاسم الكامل (بالعربية)",
+      "arabicNamePlaceholder": "أدخل الاسم الكامل",
       "email": "البريد الإلكتروني",
       "emailPlaceholder": "user@ministry.om",
       "password": "كلمة المرور",
       "passwordPlaceholder": "أدخل كلمة مرور آمنة",
+      "passwordHint": "يجب أن تتكون من 8 أحرف على الأقل",
       "confirmPassword": "تأكيد كلمة المرور",
       "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
       "phone": "رقم الهاتف",
@@ -103,8 +153,18 @@
       "isActive": "الحالة النشطة",
       "cancel": "إلغاء",
       "save": "حفظ",
+      "saveChanges": "حفظ التغييرات",
       "create": "إنشاء مستخدم",
-      "update": "تحديث المستخدم"
+      "createUser": "إنشاء مستخدم",
+      "update": "تحديث المستخدم",
+      "userId": "معرف المستخدم",
+      "userIdPlaceholder": "OM-2024-001",
+      "booksBorrowed": "الكتب المستعارة",
+      "outstandingFines": "الغرامات المستحقة",
+      "addNewUserDescription": "إنشاء حساب مستخدم جديد لنظام المكتبة",
+      "updateUserDescription": "تحديث معلومات المستخدم والصلاحيات",
+      "lastUpdated": "آخر تحديث",
+      "keepCurrentPassword": "اتركه فارغاً للاحتفاظ بكلمة المرور الحالية"
     },
     "validation": {
       "nameRequired": "الاسم الكامل مطلوب",
@@ -125,25 +185,139 @@
       "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
       "deleteWarning": "لا يمكن التراجع عن هذا الإجراء",
       "bulkDeleteConfirm": "هل أنت متأكد أنك تريد حذف {count} مستخدمين؟",
+      "bulkDeleteSuccess": "تم حذف {count} مستخدم بنجاح",
+      "bulkActivateSuccess": "تم تفعيل {count} مستخدم بنجاح",
+      "bulkDeactivateSuccess": "تم إلغاء تفعيل {count} مستخدم بنجاح",
       "exportSuccess": "تم تصدير المستخدمين بنجاح",
       "error": "حدث خطأ"
     },
     "status": {
       "active": "نشط",
-      "inactive": "غير نشط"
+      "inactive": "غير نشط",
+      "pending": "قيد الانتظار"
     },
     "roles": {
       "admin": "مسؤول",
+      "administrator": "مسؤول النظام",
       "librarian": "أمين مكتبة",
-      "patron": "مستفيد"
+      "cataloger": "أمين الفهرسة",
+      "circulation_staff": "موظف التداول",
+      "patron": "مستفيد",
+      "student": "طالب",
+      "teacher": "معلم",
+      "adminFull": "مسؤول - Administrator",
+      "librarianFull": "أمين المكتبة - Librarian",
+      "teacherFull": "معلم - Teacher",
+      "studentFull": "طالب - Student"
+    },
+    "pagination": {
+      "showingResults": "عرض {start}-{end} من {total} مستخدم",
+      "itemsPerPage": "عدد العناصر في الصفحة:",
+      "previous": "السابق",
+      "next": "التالي"
     },
     "actions": {
       "edit": "تعديل",
       "delete": "حذف",
+      "deleting": "جاري الحذف",
       "view": "عرض",
       "export": "تصدير",
       "bulkDelete": "حذف المحدد",
-      "selected": "{count} محدد"
+      "selected": "{count} محدد",
+      "message": "رسالة",
+      "activate": "تفعيل",
+      "deactivate": "إلغاء التفعيل",
+      "select": "تحديد",
+      "exitSelectionMode": "إنهاء وضع التحديد",
+      "enterSelectionMode": "تفعيل وضع التحديد"
+    },
+    "notifications": {
+      "success": "نجاح",
+      "error": "خطأ",
+      "info": "معلومة",
+      "userCreated": "تم إنشاء المستخدم بنجاح",
+      "userUpdated": "تم تحديث المستخدم بنجاح",
+      "userDeleted": "تم حذف المستخدم بنجاح",
+      "exporting": "جاري تصدير المستخدمين...",
+      "exportSuccess": "تم تصدير المستخدمين بنجاح"
+    },
+    "confirmations": {
+      "deleteTitle": "حذف المستخدم",
+      "deleteUser": "هل أنت متأكد من حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "noResults": "لم يتم العثور على مستخدمين",
+    "noResultsDescription": "جرب تعديل الفلاتر أو استعلام البحث",
+    "retry": "إعادة المحاولة"
+  },
+  "dashboard": {
+    "stats": {
+      "systemStatistics": "إحصائيات النظام",
+      "failedToLoad": "فشل في تحميل الإحصائيات",
+      "totalUsers": "إجمالي المستخدمين",
+      "totalBooks": "إجمالي الكتب",
+      "activeLoans": "الإعارات النشطة",
+      "overdueItems": "العناصر المتأخرة",
+      "booksBorrowed": "الكتب المستعارة",
+      "overdueBooks": "الكتب المتأخرة",
+      "newMembersThisMonth": "الأعضاء الجدد هذا الشهر",
+      "booksAddedThisMonth": "الكتب المضافة هذا الشهر",
+      "comparedToLastMonth": "مقارنة بالشهر الماضي"
+    }
+  },
+  "books": {
+    "title": "مجموعة المكتبة",
+    "subtitle": "استكشف مجموعتنا المنتقاة من الأدب العماني والعربي",
+    "addBook": "إضافة كتاب",
+    "import": "استيراد",
+    "export": "تصدير",
+    "searchPlaceholder": "البحث في الكتب بالعنوان، المؤلف، ISBN...",
+    "noBooks": "لم يتم العثور على كتب",
+    "tryAdjusting": "حاول تعديل البحث أو الفلاتر",
+    "showingBooks": "عرض {count} من {total} كتاب",
+    "stats": {
+      "totalBooks": "إجمالي الكتب",
+      "available": "متاحة",
+      "borrowed": "مستعارة",
+      "overdue": "متأخرة",
+      "vsLastMonth": "مقارنة بالشهر الماضي"
+    },
+    "filters": {
+      "allCategories": "جميع التصنيفات",
+      "allStatus": "كل الحالات",
+      "clear": "مسح"
+    },
+    "status": {
+      "available": "متاح",
+      "borrowed": "مستعار",
+      "reserved": "محجوز",
+      "damaged": "تالف",
+      "underRepair": "قيد الإصلاح"
+    },
+    "categories": {
+      "history": "التاريخ",
+      "literature": "الأدب",
+      "poetry": "الشعر",
+      "culture": "الثقافة",
+      "reference": "مرجع",
+      "business": "الأعمال",
+      "geography": "الجغرافيا",
+      "philosophy": "الفلسفة",
+      "environment": "البيئة"
+    },
+    "card": {
+      "details": "التفاصيل",
+      "view": "عرض",
+      "favorite": "المفضلة",
+      "due": "تاريخ الإرجاع",
+      "copies": "نسخ",
+      "reviews": "تقييمات",
+      "newArrival": "جديد"
+    },
+    "actions": {
+      "addToCart": "إضافة إلى السلة",
+      "borrow": "استعارة",
+      "reserve": "حجز",
+      "viewDetails": "عرض التفاصيل"
     }
   }
 }
