@@ -8,6 +8,8 @@ import { StatsCards } from "@/components/books/StatsCards"
 import { SearchAndFilters } from "@/components/books/SearchAndFilters"
 import { BookCard } from "@/components/books/BookCard"
 import { OMANI_BOOKS, getCategories, getBooksStats, filterBooks } from "@/lib/data/books"
+import AdminLayout from "@/components/AdminLayout"
+import { Pagination } from "@/components/Pagination"
 
 export default function CatalogPage() {
   const t = useTranslations("books")
@@ -15,6 +17,8 @@ export default function CatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(12)
 
   // Get statistics
   const stats = getBooksStats()
@@ -27,9 +31,32 @@ export default function CatalogPage() {
     return filterBooks(OMANI_BOOKS, searchTerm, selectedCategory, selectedStatus)
   }, [searchTerm, selectedCategory, selectedStatus])
 
+  // Reset to page 1 when filters change
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [searchTerm, selectedCategory, selectedStatus, itemsPerPage])
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedBooks = filteredBooks.slice(startIndex, endIndex)
+
+  // Handle page change with scroll to top
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // Handle items per page change
+  const handleItemsPerPageChange = (items: number) => {
+    setItemsPerPage(items)
+    setCurrentPage(1)
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <AdminLayout>
+      <div className="space-y-6">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -93,17 +120,32 @@ export default function CatalogPage() {
 
         {/* Books Grid/List */}
         {filteredBooks.length > 0 ? (
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                : "flex flex-col gap-4"
-            }
-          >
-            {filteredBooks.map((book) => (
-              <BookCard key={book.id} book={book} viewMode={viewMode} />
-            ))}
-          </div>
+          <>
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  : "flex flex-col gap-4"
+              }
+            >
+              {paginatedBooks.map((book) => (
+                <BookCard key={book.id} book={book} viewMode={viewMode} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                itemsPerPage={itemsPerPage}
+                totalItems={filteredBooks.length}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
+                itemType="books"
+              />
+            )}
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="mb-4 rounded-full bg-muted p-6">
@@ -126,6 +168,6 @@ export default function CatalogPage() {
           </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   )
 }
