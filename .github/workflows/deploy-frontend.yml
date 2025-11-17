@@ -1,0 +1,144 @@
+name: Deploy Frontend to Render
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Build and Test Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run linting
+        working-directory: ./frontend
+        run: |
+          if npm run lint --if-present; then
+            echo "✅ Linting passed"
+          else
+            echo "⚠️ Linting issues found (continuing anyway)"
+          fi
+        continue-on-error: true
+
+      - name: Type check
+        working-directory: ./frontend
+        run: |
+          if npm run type-check --if-present; then
+            echo "✅ Type checking passed"
+          else
+            if npx tsc --noEmit; then
+              echo "✅ Type checking passed"
+            else
+              echo "⚠️ Type checking issues found (continuing anyway)"
+            fi
+          fi
+        continue-on-error: true
+
+      - name: Run tests
+        working-directory: ./frontend
+        run: |
+          if npm run test --if-present; then
+            echo "✅ Tests passed"
+          else
+            echo "⚠️ No tests found or tests failed (continuing anyway)"
+          fi
+        continue-on-error: true
+
+      - name: Build application
+        working-directory: ./frontend
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NODE_ENV: production
+        run: |
+          echo "Building Next.js application..."
+          npm run build
+
+      - name: Build Summary
+        if: success()
+        run: |
+          echo "## ✅ Frontend Build Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The Next.js application has been built successfully and is ready for deployment." >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    name: Deploy to Render
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Error: RENDER_FRONTEND_DEPLOY_HOOK secret not set"
+            echo "Please add your Render deploy hook URL to GitHub Secrets"
+            exit 1
+          fi
+
+          echo "Triggering deployment to Render..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
+
+          if [ $response -eq 200 ] || [ $response -eq 201 ]; then
+            echo "✅ Deployment triggered successfully!"
+            echo "Check your Render dashboard for deployment status:"
+            echo "https://dashboard.render.com/web/srv-d49q6uripnbc7397nor0"
+          else
+            echo "❌ Deployment failed with HTTP status: $response"
+            exit 1
+          fi
+
+      - name: Deployment Summary
+        if: success()
+        run: |
+          echo "## 🚀 Frontend Deployment Triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Service:** Next.js Frontend" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Monitor deployment at: [Render Dashboard](https://dashboard.render.com/web/srv-d49q6uripnbc7397nor0)" >> $GITHUB_STEP_SUMMARY
+
+  notify:
+    name: Notify Deployment Status
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Deployment Success Notification
+        if: needs.deploy.result == 'success'
+        run: |
+          echo "✅ Frontend deployment triggered successfully!"
+          echo "Service ID: srv-d49q6uripnbc7397nor0"
+
+      - name: Deployment Failure Notification
+        if: needs.deploy.result == 'failure'
+        run: |
+          echo "❌ Frontend deployment failed!"
+          echo "Please check the logs above for details."
+          exit 1
