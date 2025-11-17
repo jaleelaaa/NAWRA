@@ -1,61 +1,173 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { useTranslations } from "next-intl"
+import { useState, useEffect } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { Plus, Upload, Download } from "lucide-react"
+import { Plus, Upload, Download, AlertCircle } from "lucide-react"
 import { StatsCards } from "@/components/books/StatsCards"
 import { SearchAndFilters } from "@/components/books/SearchAndFilters"
 import { BookCard } from "@/components/books/BookCard"
-import { OMANI_BOOKS, getCategories, getBooksStats, filterBooks } from "@/lib/data/books"
+import { BooksSkeleton } from "@/components/books/BooksSkeleton"
+import { BookFormModal } from "@/components/books/BookFormModal"
+import { useBooks, useBookStatistics, useCategories, useDeleteBook } from "@/hooks/useBooks"
+import type { BookFilters, BookResponse } from "@/lib/types/books"
 import AdminLayout from "@/components/AdminLayout"
+import ProtectedRoute from "@/components/ProtectedRoute"
 import { Pagination } from "@/components/Pagination"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { PERMISSIONS, canCreate, canUpdate, canDelete } from "@/lib/permissions"
+import { useAuthStore } from "@/stores/authStore"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function CatalogPage() {
   const t = useTranslations("books")
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+  const locale = useLocale()
+  const user = useAuthStore((state) => state.user)
+  const canCreateBook = canCreate(user?.permissions, 'INVENTORY')
+  const canUpdateBook = canUpdate(user?.permissions, 'INVENTORY')
+  const canDeleteBook = canDelete(user?.permissions, 'INVENTORY')
+
+  // Filters state
+  const [filters, setFilters] = useState<BookFilters>({
+    page: 1,
+    page_size: 12,
+    search: "",
+    category_id: undefined,
+    status: undefined,
+  })
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(12)
 
-  // Get statistics
-  const stats = getBooksStats()
+  // Modal state
+  const [showBookModal, setShowBookModal] = useState(false)
+  const [selectedBook, setSelectedBook] = useState<BookResponse | null>(null)
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [bookToDelete, setBookToDelete] = useState<BookResponse | null>(null)
 
-  // Get unique categories
-  const categories = getCategories()
+  // Fetch data using React Query hooks
+  const { data: booksData, isLoading: booksLoading, error: booksError, refetch: refetchBooks } = useBooks(filters)
+  const { data: statistics, isLoading: statsLoading } = useBookStatistics()
+  const { data: categoriesData, isLoading: categoriesLoading } = useCategories(true)
+  const deleteBook = useDeleteBook()
 
-  // Filter books based on search and filters
-  const filteredBooks = useMemo(() => {
-    return filterBooks(OMANI_BOOKS, searchTerm, selectedCategory, selectedStatus)
-  }, [searchTerm, selectedCategory, selectedStatus])
+  // Extract data from responses
+  const books = booksData?.items || []
+  const totalBooks = booksData?.meta?.total || 0
+  const totalPages = booksData?.meta?.total_pages || 0
+  const categories = categoriesData?.items || []
 
-  // Reset to page 1 when filters change
-  useMemo(() => {
-    setCurrentPage(1)
-  }, [searchTerm, selectedCategory, selectedStatus, itemsPerPage])
+  // Reset to page 1 when filters change (except page itself)
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, page: 1 }))
+  }, [filters.search, filters.category_id, filters.status, filters.page_size])
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedBooks = filteredBooks.slice(startIndex, endIndex)
+  // Handle filter changes
+  const handleSearchChange = (search: string) => {
+    setFilters(prev => ({ ...prev, search, page: 1 }))
+  }
+
+  const handleCategoryChange = (categoryId: string | null) => {
+    setFilters(prev => ({
+      ...prev,
+      category_id: categoryId || undefined,
+      page: 1
+    }))
+  }
+
+  const handleStatusChange = (status: string | null) => {
+    setFilters(prev => ({
+      ...prev,
+      status: status as any || undefined,
+      page: 1
+    }))
+  }
 
   // Handle page change with scroll to top
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+    setFilters(prev => ({ ...prev, page }))
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // Handle items per page change
   const handleItemsPerPageChange = (items: number) => {
-    setItemsPerPage(items)
-    setCurrentPage(1)
+    setFilters(prev => ({ ...prev, page_size: items, page: 1 }))
+  }
+
+  // CRUD handlers
+  const handleAddBook = () => {
+    setSelectedBook(null)
+    setModalMode('create')
+    setShowBookModal(true)
+  }
+
+  const handleEditBook = (book: BookResponse) => {
+    setSelectedBook(book)
+    setModalMode('edit')
+    setShowBookModal(true)
+  }
+
+  const handleDeleteClick = (book: BookResponse) => {
+    setBookToDelete(book)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (bookToDelete) {
+      await deleteBook.mutateAsync(bookToDelete.id)
+      setShowDeleteDialog(false)
+      setBookToDelete(null)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowBookModal(false)
+    setSelectedBook(null)
+  }
+
+  // Show loading skeleton
+  if (booksLoading || statsLoading || categoriesLoading) {
+    return (
+      <ProtectedRoute requiredPermissions={[PERMISSIONS.INVENTORY.READ, PERMISSIONS.CATALOG.SEARCH]}>
+        <AdminLayout>
+          <BooksSkeleton />
+        </AdminLayout>
+      </ProtectedRoute>
+    )
+  }
+
+  // Show error state
+  if (booksError) {
+    return (
+      <ProtectedRoute requiredPermissions={[PERMISSIONS.INVENTORY.READ, PERMISSIONS.CATALOG.SEARCH]}>
+        <AdminLayout>
+        <div className="space-y-6">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {t("errorLoading")} {(booksError as any)?.message || "Unknown error"}
+            </AlertDescription>
+          </Alert>
+          <Button onClick={() => refetchBooks()}>
+            {t("retry")}
+          </Button>
+        </div>
+      </AdminLayout>
+      </ProtectedRoute>
+    )
   }
 
   return (
-    <AdminLayout>
+    <ProtectedRoute requiredPermissions={[PERMISSIONS.INVENTORY.READ, PERMISSIONS.CATALOG.SEARCH]}>
+      <AdminLayout>
       <div className="space-y-6">
         {/* Header Section */}
         <div className="mb-8">
@@ -68,43 +180,48 @@ export default function CatalogPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3">
-              <Button
-                variant="outline"
-                className="gap-2 border-border/50 hover:bg-accent hover:border-primary/50 transition-all"
-              >
-                <Upload className="h-4 w-4" />
-                {t("import")}
-              </Button>
-              <Button
-                variant="outline"
-                className="gap-2 border-border/50 hover:bg-accent hover:border-primary/50 transition-all"
-              >
-                <Download className="h-4 w-4" />
-                {t("export")}
-              </Button>
-              <Button className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-md hover:shadow-lg transition-all">
-                <Plus className="h-4 w-4" />
-                {t("addBook")}
-              </Button>
-            </div>
+            {canCreateBook && (
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  variant="outline"
+                  className="gap-2 border-border/50 hover:bg-accent hover:border-primary/50 transition-all"
+                >
+                  <Upload className="h-4 w-4" />
+                  {t("import")}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="gap-2 border-border/50 hover:bg-accent hover:border-primary/50 transition-all"
+                >
+                  <Download className="h-4 w-4" />
+                  {t("export")}
+                </Button>
+                <Button
+                  onClick={handleAddBook}
+                  className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-md hover:shadow-lg transition-all"
+                >
+                  <Plus className="h-4 w-4" />
+                  {t("addBook")}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Statistics Cards */}
         <div className="mb-8">
-          <StatsCards stats={stats} />
+          <StatsCards stats={statistics} />
         </div>
 
         {/* Search and Filters */}
         <div className="mb-8">
           <SearchAndFilters
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            selectedStatus={selectedStatus}
-            onStatusChange={setSelectedStatus}
+            searchTerm={filters.search || ""}
+            onSearchChange={handleSearchChange}
+            selectedCategory={filters.category_id || null}
+            onCategoryChange={handleCategoryChange}
+            selectedStatus={filters.status || null}
+            onStatusChange={handleStatusChange}
             categories={categories}
             viewMode={viewMode}
             onViewModeChange={setViewMode}
@@ -114,12 +231,15 @@ export default function CatalogPage() {
         {/* Results Count */}
         <div className="mb-6">
           <p className="text-sm text-muted-foreground font-medium">
-            {t("showingBooks", { count: filteredBooks.length, total: OMANI_BOOKS.length })}
+            {t("showingBooks", {
+              count: books.length,
+              total: totalBooks
+            })}
           </p>
         </div>
 
         {/* Books Grid/List */}
-        {filteredBooks.length > 0 ? (
+        {books.length > 0 ? (
           <>
             <div
               className={
@@ -128,18 +248,24 @@ export default function CatalogPage() {
                   : "flex flex-col gap-4"
               }
             >
-              {paginatedBooks.map((book) => (
-                <BookCard key={book.id} book={book} viewMode={viewMode} />
+              {books.map((book) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  viewMode={viewMode}
+                  onEdit={canUpdateBook ? handleEditBook : undefined}
+                  onDelete={canDeleteBook ? handleDeleteClick : undefined}
+                />
               ))}
             </div>
 
             {/* Pagination */}
             {totalPages > 0 && (
               <Pagination
-                currentPage={currentPage}
+                currentPage={filters.page || 1}
                 totalPages={totalPages}
-                itemsPerPage={itemsPerPage}
-                totalItems={filteredBooks.length}
+                itemsPerPage={filters.page_size || 12}
+                totalItems={totalBooks}
                 onPageChange={handlePageChange}
                 onItemsPerPageChange={handleItemsPerPageChange}
                 itemType="books"
@@ -168,6 +294,38 @@ export default function CatalogPage() {
           </div>
         )}
       </div>
+
+      {/* Book Form Modal */}
+      <BookFormModal
+        open={showBookModal}
+        onClose={handleCloseModal}
+        book={selectedBook}
+        mode={modalMode}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("deleteConfirmMessage", {
+                title: bookToDelete?.title || "",
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t("delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
+    </ProtectedRoute>
   )
 }

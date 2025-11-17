@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MoreVertical, Eye, BookOpen, AlertCircle, CheckCircle, Clock } from "lucide-react"
+import { MoreVertical, Eye, BookOpen, AlertCircle, CheckCircle, Clock, DollarSign } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 interface CirculationRecord {
@@ -16,15 +16,43 @@ interface CirculationRecord {
   dueDate: string
   daysLeft: number
   status: "active" | "overdue" | "returned" | "reserved"
+  fineAmount?: number
+  finePaid?: boolean
 }
 
 interface CirculationTableProps {
   records: CirculationRecord[]
+  onCollectFee?: (userId: string, userName: string) => void
 }
 
-export default function CirculationTable({ records }: CirculationTableProps) {
+export default function CirculationTable({ records, onCollectFee }: CirculationTableProps) {
   const t = useTranslations("circulation")
   const [hoveredRow, setHoveredRow] = useState<string | null>(null)
+
+  const getFineDisplay = (fineAmount?: number, finePaid?: boolean) => {
+    if (!fineAmount || fineAmount === 0) {
+      return (
+        <span className="text-[#9CA3AF] text-sm">0.000 OMR</span>
+      )
+    }
+
+    return (
+      <div className="flex flex-col gap-1">
+        <span className="font-bold text-[#111827]">{fineAmount.toFixed(3)} OMR</span>
+        {finePaid ? (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+            <CheckCircle className="w-3 h-3" />
+            {t("table.paid")}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
+            <AlertCircle className="w-3 h-3" />
+            {t("table.unpaid")}
+          </span>
+        )}
+      </div>
+    )
+  }
 
   const getStatusBadge = (status: string) => {
     const badges = {
@@ -104,6 +132,9 @@ export default function CirculationTable({ records }: CirculationTableProps) {
                 {t("table.dueDate")}
               </th>
               <th className="text-left px-6 py-4 font-bold text-[#6B7280] text-sm uppercase tracking-wider">
+                {t("table.fineAmount")}
+              </th>
+              <th className="text-left px-6 py-4 font-bold text-[#6B7280] text-sm uppercase tracking-wider">
                 {t("table.status")}
               </th>
               <th className="text-center px-6 py-4 font-bold text-[#6B7280] text-sm uppercase tracking-wider">
@@ -146,9 +177,21 @@ export default function CirculationTable({ records }: CirculationTableProps) {
                   <p className="font-bold text-[#111827]">{record.dueDate}</p>
                   <div className="text-sm mt-1">{getDueCountdown(record.daysLeft)}</div>
                 </td>
+                <td className="px-6 py-4">
+                  {getFineDisplay(record.fineAmount, record.finePaid)}
+                </td>
                 <td className="px-6 py-4">{getStatusBadge(record.status)}</td>
                 <td className="px-6 py-4 text-center">
                   <div className={`flex items-center justify-center gap-2 transition-all duration-300 ${hoveredRow === record.id ? "opacity-100" : "opacity-60"}`}>
+                    {record.fineAmount && record.fineAmount > 0 && !record.finePaid && onCollectFee && (
+                      <button
+                        onClick={() => onCollectFee(record.userId, record.userName)}
+                        className="p-2 hover:bg-green-100 text-green-700 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 group"
+                        title={t("table.collectFee")}
+                      >
+                        <DollarSign className="w-5 h-5 group-hover:animate-bounce" />
+                      </button>
+                    )}
                     <button className="p-2 hover:bg-[#E5E7EB] rounded-lg transition-all duration-200 hover:scale-110 active:scale-95">
                       <Eye className="w-5 h-5 text-[#6B7280]" />
                     </button>

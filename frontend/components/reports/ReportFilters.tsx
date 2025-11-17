@@ -22,6 +22,7 @@ export default function ReportFilters({
   isLoading = false,
 }: ReportFiltersProps) {
   const t = useTranslations('reports.filters');
+  const tCategories = useTranslations('reports.categories');
   const [filters, setFilters] = useState<FilterState>({
     dateRange: { from: '', to: '' },
     status: 'all',
@@ -174,11 +175,11 @@ export default function ReportFilters({
             className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-[#8B1538] focus:border-[#8B1538] focus:ring-2 focus:ring-[#8B1538]/20 transition-all"
           >
             <option value="all">{t('allCategories')}</option>
-            <option value="circulation">Circulation</option>
-            <option value="user_activity">User Activity</option>
-            <option value="collection">Collection</option>
-            <option value="financial">Financial</option>
-            <option value="overview">Overview</option>
+            <option value="circulation">{tCategories('circulation')}</option>
+            <option value="user_activity">{tCategories('userActivity')}</option>
+            <option value="collection">{tCategories('collection')}</option>
+            <option value="financial">{tCategories('financial')}</option>
+            <option value="overview">{tCategories('overview')}</option>
           </select>
         </div>
 

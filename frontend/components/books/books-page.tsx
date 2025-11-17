@@ -6,6 +6,8 @@ import { StatsCards } from "./stats-cards"
 import { SearchAndFilters } from "./search-and-filters"
 import { Button } from "@/components/ui/button"
 import { Plus, Upload, Download, Sparkles } from "lucide-react"
+import { useAuthStore } from "@/stores/authStore"
+import { canCreate } from "@/lib/permissions"
 
 const SAMPLE_BOOKS = [
   {
@@ -292,6 +294,8 @@ export function BooksPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const user = useAuthStore((state) => state.user)
+  const canCreateBook = canCreate(user?.permissions, 'INVENTORY')
 
   const filteredBooks = useMemo(() => {
     return SAMPLE_BOOKS.filter((book) => {
@@ -309,7 +313,7 @@ export function BooksPage() {
   }, [searchTerm, selectedCategory, selectedStatus])
 
   const stats = {
-    total: SAMPLE_BOOKS.length,
+    totalBooks: SAMPLE_BOOKS.length,
     available: SAMPLE_BOOKS.filter((b) => b.status === "available").length,
     borrowed: SAMPLE_BOOKS.filter((b) => b.status === "borrowed").length,
     overdue: 23,
@@ -334,31 +338,33 @@ export function BooksPage() {
                 Explore our curated Omani and Arabic literature collection
               </p>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 bg-white hover:bg-slate-50 border-border/50 transition-all hover:shadow-md"
-              >
-                <Upload className="h-4 w-4" />
-                Import
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 bg-white hover:bg-slate-50 border-border/50 transition-all hover:shadow-md"
-              >
-                <Download className="h-4 w-4" />
-                Export
-              </Button>
-              <Button
-                size="sm"
-                className="gap-2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg transition-all hover:from-primary/90"
-              >
-                <Plus className="h-4 w-4" />
-                Add Book
-              </Button>
-            </div>
+            {canCreateBook && (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 bg-white hover:bg-slate-50 border-border/50 transition-all hover:shadow-md"
+                >
+                  <Upload className="h-4 w-4" />
+                  Import
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 bg-white hover:bg-slate-50 border-border/50 transition-all hover:shadow-md"
+                >
+                  <Download className="h-4 w-4" />
+                  Export
+                </Button>
+                <Button
+                  size="sm"
+                  className="gap-2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg transition-all hover:from-primary/90"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Book
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

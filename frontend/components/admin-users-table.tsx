@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { Edit2, Trash2, ToggleLeft as Toggle2 } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 interface AdminUser {
   id: number
@@ -20,6 +21,8 @@ interface AdminUsersTableProps {
 }
 
 const AdminUsersTable: React.FC<AdminUsersTableProps> = ({ users, onEditUser, onDeleteUser, onToggleStatus }) => {
+  const t = useTranslations('users');
+
   return (
     <div className="bg-white rounded-lg shadow-md border border-[#E5E3E0] overflow-hidden">
       <div className="overflow-x-auto">
@@ -46,7 +49,7 @@ const AdminUsersTable: React.FC<AdminUsersTableProps> = ({ users, onEditUser, on
                 <td className="px-6 py-4 text-gray-600 text-sm">{user.email}</td>
                 <td className="px-6 py-4">
                   <span className="px-3 py-1 rounded-full text-sm font-semibold bg-[#E8D4A0] text-[#8B2635]">
-                    {user.role}
+                    {t(`roles.${user.role.toLowerCase().replace(/ /g, '_')}`)}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-gray-600 text-sm">{user.lastActive}</td>

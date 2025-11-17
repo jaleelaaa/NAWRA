@@ -11,7 +11,10 @@
     "user": "User",
     "staff": "Staff",
     "defaultUser": "User",
-    "defaultRole": "Staff"
+    "defaultRole": "Staff",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -313,6 +316,14 @@
       "reviews": "reviews",
       "newArrival": "NEW"
     },
+    "edit": "Edit",
+    "delete": "Delete",
+    "noLocation": "No location",
+    "uncategorized": "Uncategorized",
+    "deleteConfirmTitle": "Delete Book",
+    "deleteConfirmMessage": "Are you sure you want to delete '{title}'? This action cannot be undone.",
+    "errorLoading": "Error loading books",
+    "retry": "Retry",
     "actions": {
       "addToCart": "Add to Cart",
       "borrow": "Borrow",
@@ -333,6 +344,7 @@
     "actions": {
       "issueBook": "Issue Book",
       "returnBook": "Return Book",
+      "collectFees": "Collect Fees",
       "exportReport": "Export Report"
     },
     "statistics": {
@@ -373,8 +385,12 @@
       "book": "Book",
       "issueDate": "Issue Date",
       "dueDate": "Due Date",
+      "fineAmount": "Fine Amount",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "collectFee": "Collect Fee"
     },
     "daysLeft": "{days} days left",
     "daysOverdue": "{days} days overdue",
@@ -414,6 +430,31 @@
         "notesPlaceholder": "Any additional notes...",
         "cancel": "Cancel",
         "submit": "Process Return"
+      },
+      "feeCollection": {
+        "title": "Collect Fees & Fines",
+        "searchUserLabel": "Search for User",
+        "searchUserPlaceholder": "Enter user name, ID, or email...",
+        "noUsersFound": "No users found matching your search",
+        "changeUser": "Change User",
+        "unpaidFines": "Unpaid Fines",
+        "dueDate": "Due",
+        "overdue": "{days} days overdue",
+        "totalAmount": "Total Amount to Collect",
+        "itemCount": "{count, plural, =1 {1 fine} other {# fines}}",
+        "collectFees": "Collect Fees",
+        "processing": "Processing...",
+        "cancel": "Cancel",
+        "loadingFines": "Loading user fines...",
+        "noUnpaidFines": "No Unpaid Fines",
+        "allClear": "This user has no outstanding fines",
+        "success": "Payment Collected Successfully!",
+        "recordsUpdated": "{count, plural, =1 {1 record} other {# records}} updated",
+        "close": "Close",
+        "searchError": "Failed to search users. Please try again.",
+        "loadFinesError": "Failed to load fines. Please try again.",
+        "collectionSuccess": "Successfully collected {amount} OMR",
+        "collectionError": "Failed to collect fees. Please try again."
       }
     }
   },
@@ -495,6 +536,14 @@
         "history": "History",
         "art": "Art"
       },
+      "categoriesShort": {
+        "fiction": "Fiction",
+        "nonFiction": "Factual",
+        "reference": "Reference",
+        "science": "Science",
+        "history": "History",
+        "art": "Art"
+      },
       "months": {
         "jan": "Jan",
         "feb": "Feb",
@@ -561,5 +610,407 @@
     "loading": "Loading reports...",
     "error": "Failed to load reports",
     "retry": "Retry"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your preferences and configurations",
+    "tabs": {
+      "general": "General",
+      "appearance": "Appearance",
+      "notifications": "Notifications",
+      "security": "Security",
+      "system": "System"
+    },
+    "general": {
+      "profile": {
+        "title": "Profile Information",
+        "description": "Manage your personal information and display preferences",
+        "displayName": "Display Name",
+        "displayNameDesc": "This name will be shown across the application",
+        "displayNamePlaceholder": "Enter your preferred name"
+      },
+      "language": {
+        "title": "Language & Region",
+        "description": "Configure language, date, and time formats",
+        "interface": "Interface Language",
+        "interfaceDesc": "Choose your preferred language for the application",
+        "dateFormat": "Date Format",
+        "timeFormat": "Time Format"
+      },
+      "defaults": {
+        "title": "Default Preferences",
+        "description": "Set your default views and preferences",
+        "landingPage": "Default Landing Page",
+        "landingPageDesc": "Page to show when you log in",
+        "itemsPerPage": "Items Per Page",
+        "itemsPerPageDesc": "Number of items to display in lists",
+        "viewMode": "Default View Mode",
+        "viewModeDesc": "Preferred view for displaying lists"
+      },
+      "pages": {
+        "dashboard": "Dashboard",
+        "catalog": "Catalog",
+        "circulation": "Circulation",
+        "reports": "Reports"
+      },
+      "viewModes": {
+        "grid": "Grid View",
+        "list": "List View",
+        "table": "Table View"
+      }
+    },
+    "appearance": {
+      "theme": {
+        "title": "Theme",
+        "description": "Customize the application's visual appearance",
+        "label": "Color Scheme",
+        "light": "Light",
+        "dark": "Dark",
+        "auto": "Auto (System)"
+      },
+      "layout": {
+        "title": "Layout & Density",
+        "description": "Adjust spacing and layout preferences"
+      },
+      "density": {
+        "label": "Interface Density",
+        "compact": "Compact",
+        "default": "Default",
+        "comfortable": "Comfortable"
+      },
+      "animation": {
+        "label": "Animation Speed",
+        "none": "None",
+        "reduced": "Reduced",
+        "default": "Default",
+        "fast": "Fast"
+      },
+      "breadcrumbs": {
+        "label": "Show Breadcrumbs",
+        "description": "Display navigation breadcrumbs at the top of pages"
+      },
+      "typography": {
+        "title": "Typography",
+        "description": "Adjust text size and appearance"
+      },
+      "fontSize": {
+        "label": "Font Size",
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large",
+        "extraLarge": "Extra Large"
+      }
+    },
+    "notifications": {
+      "email": {
+        "title": "Email Notifications",
+        "description": "Configure what updates you receive via email",
+        "systemAnnouncements": "System Announcements",
+        "dueDateReminders": "Due Date Reminders",
+        "overdueNotifications": "Overdue Notifications",
+        "newRequests": "New Circulation Requests"
+      },
+      "inApp": {
+        "title": "In-App Notifications",
+        "description": "Manage notifications within the application",
+        "enabled": "Enable In-App Notifications",
+        "sound": "Notification Sounds",
+        "badges": "Badge Counters",
+        "position": "Notification Position",
+        "autoDismiss": "Auto-Dismiss Time"
+      },
+      "position": {
+        "topRight": "Top Right",
+        "topCenter": "Top Center",
+        "bottomRight": "Bottom Right"
+      }
+    },
+    "security": {
+      "authentication": {
+        "title": "Authentication",
+        "description": "Manage your account security settings"
+      },
+      "twoFactor": {
+        "label": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account"
+      },
+      "session": {
+        "title": "Session Management",
+        "description": "Control your active sessions and timeouts",
+        "timeout": "Session Timeout",
+        "timeoutDesc": "Automatically log out after period of inactivity"
+      }
+    },
+    "system": {
+      "data": {
+        "title": "Data Management",
+        "description": "Export and manage your data",
+        "export": "Export My Data"
+      },
+      "cache": {
+        "title": "Cache & Performance",
+        "description": "Clear cached data to improve performance",
+        "clear": "Clear Cache",
+        "cleared": "Cache Cleared",
+        "clearedDesc": "Application cache has been cleared successfully"
+      },
+      "export": {
+        "title": "Data Exported",
+        "description": "Your data export has been prepared"
+      }
+    },
+    "footer": {
+      "unsavedChanges": "You have unsaved changes",
+      "allSaved": "All changes saved",
+      "resetDefaults": "Reset to Defaults"
+    },
+    "reset": {
+      "title": "Reset Settings",
+      "description": "Are you sure you want to reset all settings to their default values? This action cannot be undone.",
+      "confirm": "Reset to Defaults"
+    }
+  },
+  "patron": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "catalog": "Browse Catalog",
+      "myLoans": "My Loans",
+      "myRequests": "My Requests",
+      "myProfile": "My Profile",
+      "patronLabel": "Patron",
+      "darkMode": "Dark Mode",
+      "lightMode": "Light Mode",
+      "language": "Language",
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Welcome back, {name}",
+      "subtitle": "Your library account overview",
+      "quickStats": {
+        "activeLoans": "Active Loans",
+        "overdueBooks": "Overdue",
+        "totalBorrowed": "Total Borrowed",
+        "activeRequests": "Active Requests"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "browseCatalog": "Browse Catalog",
+        "viewMyLoans": "View My Loans",
+        "viewMyRequests": "View My Requests",
+        "editProfile": "Edit Profile"
+      },
+      "recentActivity": {
+        "title": "Recent Activity",
+        "empty": "No recent activity"
+      },
+      "activity": {
+        "status": {
+          "active": "Active",
+          "overdue": "Overdue",
+          "returned": "Returned",
+          "reserved": "Reserved",
+          "pending": "Pending"
+        }
+      },
+      "errors": {
+        "loadFailed": "Failed to load dashboard data"
+      }
+    },
+    "catalog": {
+      "title": "Browse Catalog",
+      "subtitle": "Search and discover books",
+      "search": {
+        "placeholder": "Search by title, author, or ISBN...",
+        "button": "Search",
+        "results": "{count} books found",
+        "noResults": "No books found matching your search"
+      },
+      "filters": {
+        "toggle": "Filters",
+        "category": "Category",
+        "status": "Availability",
+        "allStatus": "All Status",
+        "allCategories": "All Categories",
+        "available": "Available",
+        "borrowed": "Borrowed",
+        "reserved": "Reserved",
+        "clear": "Clear Filters"
+      },
+      "status": {
+        "available": "Available",
+        "borrowed": "Borrowed",
+        "reserved": "Reserved"
+      },
+      "requestBook": "Request Book",
+      "joinWaitlist": "Join Waitlist",
+      "requesting": "Requesting...",
+      "requestSuccess": "Book '{title}' requested successfully!",
+      "noBooksFound": "No books found",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "pageInfo": "Page {current} of {total}"
+      },
+      "errors": {
+        "loadFailed": "Failed to load books",
+        "authError": "Authentication failed. Please log in again.",
+        "networkError": "Network error. Please check your internet connection.",
+        "alreadyRequested": "You already have an active request for this book",
+        "requestFailed": "Failed to request book"
+      }
+    },
+    "loans": {
+      "title": "My Loans",
+      "subtitle": "View your borrowed books",
+      "tabs": {
+        "active": "Active Loans",
+        "history": "Loan History"
+      },
+      "table": {
+        "book": "Book",
+        "checkoutDate": "Borrowed",
+        "dueDate": "Due Date",
+        "returnDate": "Returned",
+        "status": "Status",
+        "fine": "Fine",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "overdue": "Overdue",
+        "returned": "Returned",
+        "dueSoon": "Due Soon"
+      },
+      "stats": {
+        "active": "Active",
+        "overdue": "Overdue",
+        "returned": "Returned"
+      },
+      "renew": "Renew",
+      "renewing": "Renewing...",
+      "renewSuccess": "Loan renewed successfully! New due date: {date}",
+      "renewalsRemaining": "{count} renewal(s) remaining",
+      "maxRenewalsReached": "Maximum renewals reached",
+      "cannotRenewOverdue": "Cannot renew overdue loans",
+      "daysRemaining": "{days} days remaining",
+      "dueToday": "Due today",
+      "filterByStatus": "Filter by status",
+      "allLoans": "All Loans",
+      "noLoans": "No loans found",
+      "noLoansSubtitle": "Browse the catalog to borrow books",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "pageInfo": "Page {current} of {total}"
+      },
+      "errors": {
+        "loadFailed": "Failed to load loans",
+        "renewFailed": "Failed to renew loan"
+      },
+      "fineBreakdown": {
+        "title": "Fine Breakdown",
+        "overdueDays": "Overdue Days",
+        "days": "days",
+        "dailyRate": "Daily Rate",
+        "calculation": "Calculation",
+        "cappedAt": "Capped at maximum {max} OMR",
+        "totalFine": "Total Fine",
+        "paid": "Paid"
+      }
+    },
+    "profile": {
+      "title": "My Profile",
+      "subtitle": "Manage your account information",
+      "tabs": {
+        "info": "Personal Information",
+        "stats": "Statistics",
+        "security": "Security"
+      },
+      "info": {
+        "title": "Personal Information",
+        "email": "Email",
+        "fullName": "Full Name",
+        "phone": "Phone Number",
+        "address": "Address",
+        "memberSince": "Member Since",
+        "notProvided": "Not provided",
+        "emailCannotChange": "Email cannot be changed"
+      },
+      "stats": {
+        "title": "Your Statistics",
+        "totalBorrowed": "Total Borrowed",
+        "activeLoans": "Active Loans",
+        "overdueBooks": "Overdue Books",
+        "totalFinesPaid": "Total Fines Paid"
+      },
+      "account": {
+        "title": "Account Information",
+        "accountType": "Account Type",
+        "accountId": "Account ID"
+      },
+      "editProfile": "Edit Profile",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "updateSuccess": "Profile updated successfully",
+      "validation": {
+        "nameRequired": "Full name is required"
+      },
+      "errors": {
+        "loadFailed": "Failed to load profile",
+        "updateFailed": "Failed to update profile"
+      }
+    },
+    "requests": {
+      "title": "My Requests",
+      "subtitle": "Book reservations and requests",
+      "table": {
+        "book": "Book",
+        "requestDate": "Requested",
+        "expiryDate": "Pickup By",
+        "status": "Status",
+        "notes": "Notes",
+        "actions": "Actions"
+      },
+      "status": {
+        "pending": "Pending",
+        "reserved": "Reserved",
+        "fulfilled": "Fulfilled",
+        "cancelled": "Cancelled"
+      },
+      "stats": {
+        "pending": "Pending",
+        "reserved": "Reserved",
+        "fulfilled": "Fulfilled",
+        "cancelled": "Cancelled"
+      },
+      "daysRemaining": "{days} days remaining",
+      "expired": "Expired",
+      "filterByStatus": "Filter by status",
+      "allRequests": "All Requests",
+      "cancelRequest": "Cancel",
+      "cancelling": "Cancelling...",
+      "confirmCancel": "Are you sure you want to cancel the request for '{title}'?",
+      "cancelSuccess": "Request cancelled successfully",
+      "noRequests": "No requests found",
+      "noRequestsSubtitle": "Browse the catalog to request books",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "pageInfo": "Page {current} of {total}"
+      },
+      "errors": {
+        "loadFailed": "Failed to load requests",
+        "cannotCancel": "Cannot cancel this request",
+        "cancelFailed": "Failed to cancel request"
+      }
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "An error occurred",
+      "retry": "Retry",
+      "goBack": "Go Back",
+      "noCover": "No cover available"
+    }
   }
 }

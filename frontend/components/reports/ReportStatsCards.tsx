@@ -2,7 +2,7 @@
 
 import React, { ReactNode, useEffect, useState } from 'react';
 import { TrendingUp, Clock, FileText, Calendar, Download, Layers } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface StatCardProps {
   title: string;
@@ -71,7 +71,7 @@ function StatCard({
   return (
     <div
       className={`
-        bg-gradient-to-br ${gradientMap[gradient]} rounded-2xl p-5
+        bg-gradient-to-br ${gradientMap[gradient]} rounded-2xl p-4
         transition-all duration-300 hover:shadow-2xl
         hover:-translate-y-2 cursor-pointer group h-full
         animate-fade-in
@@ -81,21 +81,21 @@ function StatCard({
       {/* Icon */}
       <div
         className={`
-          ${bgColorMap[gradient]} w-14 h-14 rounded-xl flex items-center
-          justify-center mb-4 group-hover:scale-110 transition-transform
+          ${bgColorMap[gradient]} w-12 h-12 rounded-xl flex items-center
+          justify-center mb-3 group-hover:scale-110 transition-transform
           duration-300
         `}
       >
-        <div className="text-white w-7 h-7">{icon}</div>
+        <div className="text-white w-6 h-6">{icon}</div>
       </div>
 
       {/* Label */}
-      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">
+      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
         {title}
       </p>
 
       {/* Value */}
-      <p className={`text-3xl font-bold text-gray-900 mb-2 ${isAnimating ? 'animate-pulse' : ''}`}>
+      <p className={`text-2xl font-bold text-gray-900 mb-1 ${isAnimating ? 'animate-pulse' : ''}`}>
         {displayValue}
       </p>
 
@@ -132,15 +132,38 @@ interface ReportStatsCardsProps {
 
 export default function ReportStatsCards({ stats, isLoading }: ReportStatsCardsProps) {
   const t = useTranslations('reports.stats');
+  const tMonths = useTranslations('reports.charts.months');
+  const locale = useLocale();
+
+  // Format a single date with proper Arabic month names
+  const formatDate = (date: Date) => {
+    const day = date.getDate();
+    const month = date.getMonth();
+
+    if (locale === 'ar') {
+      // Use Arabic month names from translations
+      const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+      const monthName = tMonths(monthKeys[month]);
+      return `${day} ${monthName}`;
+    } else {
+      // Use English formatting
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  };
 
   // Format date range display
   const formatDateRange = () => {
-    if (!stats?.active_period) return 'Jan 1 - Mar 31';
+    if (!stats?.active_period) {
+      // Use localized fallback dates
+      const fallbackStart = new Date(new Date().getFullYear(), 0, 1); // Jan 1 of current year
+      const fallbackEnd = new Date(new Date().getFullYear(), 2, 31); // Mar 31 of current year
+      return `${formatDate(fallbackStart)} - ${formatDate(fallbackEnd)}`;
+    }
 
     const start = new Date(stats.active_period.start_date);
     const end = new Date(stats.active_period.end_date);
 
-    return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+    return `${formatDate(start)} - ${formatDate(end)}`;
   };
 
   // Show loading skeleton

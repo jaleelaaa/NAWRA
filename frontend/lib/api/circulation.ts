@@ -201,6 +201,19 @@ export const waiveFine = async (fineId: string): Promise<Fine> => {
   return response.data;
 };
 
+/**
+ * Collect all fines from a user
+ */
+export const collectUserFines = async (userId: string): Promise<{
+  user_id: string;
+  total_collected: number;
+  records_updated: number;
+  message: string;
+}> => {
+  const response = await apiClient.post(`/circulation/fines/collect/${userId}`);
+  return response.data;
+};
+
 // ============================================================================
 // Statistics
 // ============================================================================

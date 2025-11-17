@@ -4,7 +4,7 @@ import { BookOpen, Check, BookMarked, AlertCircle, TrendingUp, TrendingDown } fr
 import { useTranslations } from "next-intl"
 
 interface StatsCardsProps {
-  stats: {
+  stats?: {
     totalBooks: number
     available: number
     borrowed: number
@@ -15,6 +15,11 @@ interface StatsCardsProps {
 export function StatsCards({ stats }: StatsCardsProps) {
   const t = useTranslations("books.stats")
   const tCommon = useTranslations("common")
+
+  // Handle undefined stats
+  if (!stats) {
+    return null
+  }
 
   const cards = [
     {

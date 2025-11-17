@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, Edit, Trash2, MoreVertical, Check } from 'lucide-react';
+import { Mail, Edit, Trash2, MoreVertical, Check, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,16 +12,20 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { useTranslations, useLocale } from 'next-intl';
 import { containerVariants, cardVariants, scaleVariants, pulseVariants } from '@/lib/animations';
 import type { DashboardUser } from '@/lib/types/users';
+import { useAuthStore } from '@/stores/authStore';
+import { canUpdate, canDelete, hasPermission, PERMISSIONS } from '@/lib/permissions';
 
 interface UserGridProps {
   users: DashboardUser[];
   onEditUser: (user: DashboardUser) => void;
   onDeleteUser?: (user: DashboardUser) => void;
   onMessageUser?: (user: DashboardUser) => void;
+  onCollectFine?: (user: DashboardUser) => void;
   selectionMode?: boolean;
   selectedUsers?: Set<string>;
   onToggleUser?: (userId: string) => void;
@@ -32,6 +36,7 @@ export function UserGrid({
   onEditUser,
   onDeleteUser,
   onMessageUser,
+  onCollectFine,
   selectionMode = false,
   selectedUsers = new Set(),
   onToggleUser
@@ -39,6 +44,10 @@ export function UserGrid({
   const t = useTranslations('users');
   const locale = useLocale();
   const isRTL = locale === 'ar';
+  const user = useAuthStore((state) => state.user);
+  const canUpdateUser = canUpdate(user?.permissions, 'USERS');
+  const canDeleteUser = canDelete(user?.permissions, 'USERS');
+  const canCollectFees = hasPermission(user?.permissions, PERMISSIONS.FEES.COLLECT);
 
   const isSelected = (userId: string) => selectedUsers.has(userId);
 
@@ -187,24 +196,48 @@ export function UserGrid({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align={isRTL ? 'start' : 'end'}>
-                  <DropdownMenuItem onClick={() => onEditUser(user)}>
-                    <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                    {t('actions.edit')}
-                  </DropdownMenuItem>
+                  {canUpdateUser && (
+                    <DropdownMenuItem onClick={() => onEditUser(user)}>
+                      <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {t('actions.edit')}
+                    </DropdownMenuItem>
+                  )}
                   {onMessageUser && (
                     <DropdownMenuItem onClick={() => onMessageUser(user)}>
                       <Mail className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {t('actions.message')}
                     </DropdownMenuItem>
                   )}
-                  {onDeleteUser && (
-                    <DropdownMenuItem
-                      onClick={() => onDeleteUser(user)}
-                      className="text-[#DC2626]"
-                    >
-                      <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {t('actions.delete')}
-                    </DropdownMenuItem>
+                  {canCollectFees && onCollectFine && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => user.fines > 0 ? onCollectFine(user) : undefined}
+                        className={user.fines > 0 ? "text-[#00693E]" : "text-[#6B7280]"}
+                        disabled={user.fines === 0}
+                      >
+                        <DollarSign className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                        {user.fines > 0
+                          ? `Collect Fine (${new Intl.NumberFormat(locale === 'ar' ? 'ar-OM' : 'en-US', {
+                              style: 'currency',
+                              currency: 'OMR'
+                            }).format(user.fines)})`
+                          : 'View Fines (No outstanding fines)'
+                        }
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {canDeleteUser && onDeleteUser && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => onDeleteUser(user)}
+                        className="text-[#DC2626]"
+                      >
+                        <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                        {t('actions.delete')}
+                      </DropdownMenuItem>
+                    </>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>

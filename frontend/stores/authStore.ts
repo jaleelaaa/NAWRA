@@ -6,8 +6,12 @@ interface User {
   id: string;
   email: string;
   full_name: string;
+  arabic_name?: string;
   role: string;
   user_type: string;
+  permissions?: string[];
+  is_active?: boolean;
+  created_at?: string;
 }
 
 interface AuthState {

@@ -21,6 +21,7 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { Link } from '@/i18n/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
+import { canAccessMenuItem } from '@/lib/permissions';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import {
   DropdownMenu,
@@ -41,9 +42,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations();
+  const tUsers = useTranslations('users');
   const { user, logout } = useAuthStore();
 
   const isRTL = locale === 'ar';
+
+  // Helper function to get display name based on locale
+  const getDisplayName = () => {
+    if (!user) return t('common.defaultUser');
+    return (locale === 'ar' && user.arabic_name) ? user.arabic_name : user.full_name;
+  };
 
   // Navigation menu items
   const menuItems = [
@@ -54,6 +62,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { id: 'reports', label: t('nav.reports'), icon: BarChart3, href: '/admin/reports' },
     { id: 'settings', label: t('nav.settings'), icon: Settings, href: '/admin/settings' },
   ];
+
+  // Filter menu items based on user permissions
+  const visibleMenuItems = menuItems.filter((item) =>
+    canAccessMenuItem(user?.permissions, item.id)
+  );
 
   const handleLogout = () => {
     logout();
@@ -90,7 +103,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className={`px-6 py-6 border-b border-gray-200 ${isRTL ? 'text-right' : ''}`}>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-[#8B2635]">NAWRA</h1>
+              <h1 className="text-xl font-bold text-[#CE1126]">NAWRA</h1>
               <p className="text-xs text-gray-600 mt-1">
                 {locale === 'ar' ? 'نظام إدارة المكتبة' : 'Library Management'}
               </p>
@@ -106,7 +119,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Navigation Menu */}
         <nav className="px-4 py-6 space-y-2 flex-1">
-          {menuItems.map((item) => {
+          {visibleMenuItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
 
@@ -117,8 +130,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
                   active
-                    ? 'bg-gradient-to-r from-[#8B2635] to-[#6B1F2E] text-white shadow-md'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-[#8B2635]'
+                    ? 'bg-gradient-to-r from-[#CE1126] to-[#A00E1E] text-white shadow-md'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-[#CE1126]'
                 }`}
               >
                 {!isRTL && <Icon size={20} className={active ? 'text-white' : ''} />}
@@ -189,13 +202,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <DropdownMenuTrigger asChild>
                     <button className={`flex items-center gap-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-[#8B2635] text-white">
+                        <AvatarFallback className="bg-[#CE1126] text-white">
                           {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                         </AvatarFallback>
                       </Avatar>
                       <div className={`hidden md:block ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <p className="text-sm font-medium text-gray-900">{user?.full_name || 'User'}</p>
-                        <p className="text-xs text-gray-500">{user?.role || 'Staff'}</p>
+                        <p className="text-sm font-medium text-gray-900">{getDisplayName()}</p>
+                        <p className="text-xs text-gray-500">{user?.role ? tUsers(`roles.${user.role.toLowerCase().replace(/ /g, '_')}`) : t('common.defaultRole')}</p>
                       </div>
                     </button>
                   </DropdownMenuTrigger>

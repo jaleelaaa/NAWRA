@@ -52,22 +52,55 @@ export default function ReportCharts({
   onExportChart,
 }: ReportChartsProps) {
   const t = useTranslations('reports.charts');
+  const tCat = useTranslations('reports.charts.categoriesShort');
   const locale = useLocale();
   const isRTL = locale === 'ar';
   const [selectedPeriod, setSelectedPeriod] = useState('week');
 
-  // Function to translate category names
+  // Function to translate category names (using short versions for charts)
   const translateCategory = (category: string): string => {
-    const categoryMap: Record<string, string> = {
+    // Remove "categories-" prefix if present
+    let cleanCategory = category;
+    if (category.startsWith('categories-')) {
+      cleanCategory = category.replace('categories-', '');
+    }
+
+    // Direct mapping to translation keys
+    const categoryKeyMap: Record<string, string> = {
       'Fiction': 'fiction',
       'Non-Fiction': 'nonFiction',
       'Reference': 'reference',
       'Science': 'science',
+      'Sciences': 'science',
       'History': 'history',
       'Art': 'art',
+      'fiction': 'fiction',
+      'nonFiction': 'nonFiction',
+      'reference': 'reference',
+      'science': 'science',
+      'history': 'history',
+      'art': 'art',
     };
-    const key = categoryMap[category];
-    return key ? t(`categories.${key}`) : category;
+
+    const translationKey = categoryKeyMap[cleanCategory];
+
+    if (translationKey) {
+      try {
+        const shortTranslation = tCat(translationKey);
+        // Check if we got a valid translation (not the key path itself)
+        if (shortTranslation &&
+            !shortTranslation.includes('categoriesShort') &&
+            !shortTranslation.includes('reports.charts') &&
+            shortTranslation !== translationKey) {
+          return shortTranslation;
+        }
+      } catch (error) {
+        console.error('Translation error for category:', cleanCategory, error);
+      }
+    }
+
+    // Fallback to original category name
+    return cleanCategory;
   };
 
   // Function to format date labels with localized month names
@@ -111,26 +144,28 @@ export default function ReportCharts({
   }));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Chart 1: Trends Over Time */}
-      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-2xl transition-shadow">
+      <div className="group bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100 hover:shadow-2xl hover:border-[#8B1538]/20 transition-all duration-300 transform hover:-translate-y-1">
         {/* Chart Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-[#8B1538] flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" />
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#8B1538] to-[#A61D45] flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-[#8B1538]/10 to-[#A61D45]/10 rounded-xl group-hover:scale-110 transition-transform duration-300">
+              <TrendingUp className="w-6 h-6 text-[#8B1538]" />
+            </div>
             {t('trendsOverTime')}
           </h3>
 
           {/* Period Toggle */}
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex gap-1 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-1.5 shadow-inner">
             {['week', 'month', 'year'].map((period) => (
               <button
                 key={period}
                 onClick={() => setSelectedPeriod(period)}
-                className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
+                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
                   selectedPeriod === period
-                    ? 'bg-white shadow text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-gradient-to-r from-[#8B1538] to-[#A61D45] text-white shadow-lg scale-105'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
                 }`}
               >
                 {t(`period.${period}`)}
@@ -140,14 +175,14 @@ export default function ReportCharts({
         </div>
 
         {/* Line Chart */}
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart
             data={localizedTrendData}
             margin={{
               top: 20,
               right: isRTL ? 10 : 30,
-              bottom: 40,
-              left: isRTL ? 30 : 10
+              bottom: 100,
+              left: isRTL ? 40 : 20
             }}
           >
             <defs>
@@ -161,21 +196,21 @@ export default function ReportCharts({
               dataKey="date"
               stroke="#6B7280"
               style={{
-                fontSize: '11px',
+                fontSize: '10px',
                 fontWeight: '600',
                 fontFamily: isRTL ? 'Cairo, Tajawal, sans-serif' : 'inherit'
               }}
-              tick={{ dy: 10 }}
-              height={60}
+              tick={{ dy: 5 }}
+              height={90}
               interval="preserveStartEnd"
-              angle={isRTL ? 0 : -20}
-              textAnchor={isRTL ? "middle" : "end"}
+              angle={-55}
+              textAnchor="end"
             />
             <YAxis
               stroke="#6B7280"
               style={{
-                fontSize: '11px',
-                fontWeight: '600',
+                fontSize: '12px',
+                fontWeight: '700',
                 fontFamily: isRTL ? 'Cairo, Tajawal, sans-serif' : 'inherit'
               }}
               width={60}
@@ -208,18 +243,20 @@ export default function ReportCharts({
       </div>
 
       {/* Chart 2: Distribution by Category */}
-      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-2xl transition-shadow">
+      <div className="group bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100 hover:shadow-2xl hover:border-[#8B1538]/20 transition-all duration-300 transform hover:-translate-y-1">
         {/* Chart Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-[#8B1538] flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#8B1538] to-[#A61D45] flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-[#8B1538]/10 to-[#A61D45]/10 rounded-xl group-hover:scale-110 transition-transform duration-300">
+              <BarChart3 className="w-6 h-6 text-[#8B1538]" />
+            </div>
             {t('distribution')}
           </h3>
 
           {/* Export Chart Button */}
           <button
             onClick={onExportChart}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-[#8B1538] border border-gray-300 rounded-lg hover:border-[#8B1538] transition-colors flex items-center gap-1"
+            className="px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#8B1538] to-[#A61D45] rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             {t('export')}
@@ -227,14 +264,14 @@ export default function ReportCharts({
         </div>
 
         {/* Bar Chart */}
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={400}>
           <BarChart
             data={localizedDistributionData}
             margin={{
               top: 20,
               right: isRTL ? 10 : 30,
-              bottom: 60,
-              left: isRTL ? 30 : 10
+              bottom: 110,
+              left: isRTL ? 40 : 20
             }}
           >
             <defs>
@@ -248,20 +285,21 @@ export default function ReportCharts({
               dataKey="category"
               stroke="#6B7280"
               style={{
-                fontSize: isRTL ? '12px' : '11px',
+                fontSize: '10px',
                 fontWeight: '600',
                 fontFamily: isRTL ? 'Cairo, Tajawal, sans-serif' : 'inherit'
               }}
-              angle={isRTL ? -30 : -45}
+              angle={-55}
               textAnchor="end"
               height={100}
-              tick={{ fontSize: isRTL ? 12 : 11 }}
+              interval={0}
+              tick={{ fontSize: 10, dy: 5 }}
             />
             <YAxis
               stroke="#6B7280"
               style={{
-                fontSize: '11px',
-                fontWeight: '600',
+                fontSize: '12px',
+                fontWeight: '700',
                 fontFamily: isRTL ? 'Cairo, Tajawal, sans-serif' : 'inherit'
               }}
               width={60}
@@ -278,8 +316,8 @@ export default function ReportCharts({
               }}
               labelStyle={{ fontWeight: 'bold', color: '#000' }}
             />
-            <Legend wrapperStyle={{ fontWeight: 'bold', paddingTop: '20px' }} />
-            <Bar dataKey="count" fill="url(#barGradient)" radius={[8, 8, 0, 0]} name="Count" />
+            <Legend wrapperStyle={{ fontWeight: '700', paddingTop: '20px' }} />
+            <Bar dataKey="count" fill="url(#barGradient)" radius={[8, 8, 0, 0]} name={t('count')} />
           </BarChart>
         </ResponsiveContainer>
       </div>

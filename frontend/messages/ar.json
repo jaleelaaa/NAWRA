@@ -11,7 +11,10 @@
     "user": "مستخدم",
     "staff": "موظف",
     "defaultUser": "مستخدم",
-    "defaultRole": "موظف"
+    "defaultRole": "موظف",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ...",
+    "cancel": "إلغاء"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
@@ -313,6 +316,68 @@
       "reviews": "تقييمات",
       "newArrival": "جديد"
     },
+    "form": {
+      "addBook": "إضافة كتاب جديد",
+      "editBook": "تعديل الكتاب",
+      "addBookDescription": "إضافة كتاب جديد إلى مجموعة المكتبة",
+      "editBookDescription": "تعديل معلومات الكتاب",
+      "basicInformation": "المعلومات الأساسية",
+      "additionalDetails": "تفاصيل إضافية",
+      "title": "العنوان (بالإنجليزية)",
+      "titlePlaceholder": "أدخل عنوان الكتاب بالإنجليزية",
+      "titleAr": "العنوان (بالعربية)",
+      "titleArPlaceholder": "أدخل عنوان الكتاب بالعربية",
+      "author": "المؤلف (بالإنجليزية)",
+      "authorPlaceholder": "أدخل اسم المؤلف بالإنجليزية",
+      "authorAr": "المؤلف (بالعربية)",
+      "authorArPlaceholder": "أدخل اسم المؤلف بالعربية",
+      "isbn": "رقم ISBN",
+      "isbnPlaceholder": "978-3-16-148410-0",
+      "barcode": "الباركود",
+      "barcodePlaceholder": "أدخل رقم الباركود",
+      "publisher": "دار النشر",
+      "publisherPlaceholder": "أدخل اسم دار النشر",
+      "publicationYear": "سنة النشر",
+      "publicationYearPlaceholder": "2024",
+      "language": "اللغة",
+      "selectLanguage": "اختر اللغة",
+      "category": "الفئة",
+      "selectCategory": "اختر الفئة",
+      "quantity": "الكمية",
+      "quantityPlaceholder": "1",
+      "pages": "عدد الصفحات",
+      "pagesPlaceholder": "256",
+      "shelfLocation": "موقع الرف",
+      "shelfLocationPlaceholder": "A-101",
+      "description": "الوصف (بالإنجليزية)",
+      "descriptionPlaceholder": "أدخل وصف الكتاب بالإنجليزية",
+      "descriptionAr": "الوصف (بالعربية)",
+      "descriptionArPlaceholder": "أدخل وصف الكتاب بالعربية",
+      "coverImage": "صورة الغلاف",
+      "uploadCover": "رفع صورة الغلاف",
+      "changeCover": "تغيير الصورة",
+      "removeCover": "حذف الصورة",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ...",
+      "addingBook": "جارٍ إضافة الكتاب..."
+    },
+    "language": {
+      "english": "الإنجليزية",
+      "arabic": "العربية",
+      "french": "الفرنسية",
+      "german": "الألمانية",
+      "spanish": "الإسبانية"
+    },
+    "edit": "تعديل",
+    "delete": "حذف",
+    "noLocation": "لا يوجد موقع",
+    "uncategorized": "غير مصنف",
+    "deleteConfirmTitle": "حذف الكتاب",
+    "deleteConfirmMessage": "هل أنت متأكد من حذف '{title}'؟ لا يمكن التراجع عن هذا الإجراء.",
+    "errorLoading": "خطأ في تحميل الكتب",
+    "retry": "إعادة المحاولة",
     "actions": {
       "addToCart": "إضافة إلى السلة",
       "borrow": "استعارة",
@@ -324,6 +389,19 @@
       "itemsPerPage": "عدد العناصر في الصفحة:",
       "previous": "السابق",
       "next": "التالي"
+    },
+    "messages": {
+      "createSuccess": "تم إضافة الكتاب بنجاح",
+      "updateSuccess": "تم تحديث الكتاب بنجاح",
+      "deleteSuccess": "تم حذف الكتاب بنجاح",
+      "error": "حدث خطأ"
+    },
+    "validation": {
+      "titleRequired": "العنوان مطلوب",
+      "authorRequired": "المؤلف مطلوب",
+      "isbnInvalid": "رقم ISBN غير صالح",
+      "quantityMin": "الكمية يجب أن تكون 1 على الأقل",
+      "yearInvalid": "سنة النشر غير صالحة"
     }
   },
   "circulation": {
@@ -333,6 +411,7 @@
     "actions": {
       "issueBook": "إصدار كتاب",
       "returnBook": "إرجاع كتاب",
+      "collectFees": "تحصيل الرسوم",
       "exportReport": "تصدير التقرير"
     },
     "statistics": {
@@ -373,8 +452,12 @@
       "book": "الكتاب",
       "issueDate": "تاريخ الإصدار",
       "dueDate": "تاريخ الاستحقاق",
+      "fineAmount": "مبلغ الغرامة",
       "status": "الحالة",
-      "actions": "الإجراءات"
+      "actions": "الإجراءات",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "collectFee": "تحصيل الرسوم"
     },
     "daysLeft": "{days} يوم متبقي",
     "daysOverdue": "{days} يوم متأخر",
@@ -414,6 +497,31 @@
         "notesPlaceholder": "أي ملاحظات إضافية...",
         "cancel": "إلغاء",
         "submit": "معالجة الإرجاع"
+      },
+      "feeCollection": {
+        "title": "تحصيل الرسوم والغرامات",
+        "searchUserLabel": "البحث عن مستخدم",
+        "searchUserPlaceholder": "أدخل اسم المستخدم أو المعرف أو البريد الإلكتروني...",
+        "noUsersFound": "لم يتم العثور على مستخدمين مطابقين للبحث",
+        "changeUser": "تغيير المستخدم",
+        "unpaidFines": "الغرامات غير المدفوعة",
+        "dueDate": "تاريخ الاستحقاق",
+        "overdue": "{days} يوم متأخر",
+        "totalAmount": "المبلغ الإجمالي للتحصيل",
+        "itemCount": "{count, plural, =1 {غرامة واحدة} other {# غرامات}}",
+        "collectFees": "تحصيل الرسوم",
+        "processing": "جاري المعالجة...",
+        "cancel": "إلغاء",
+        "loadingFines": "جاري تحميل غرامات المستخدم...",
+        "noUnpaidFines": "لا توجد غرامات غير مدفوعة",
+        "allClear": "ليس لدى هذا المستخدم أي غرامات مستحقة",
+        "success": "تم تحصيل الدفعة بنجاح!",
+        "recordsUpdated": "{count, plural, =1 {سجل واحد} other {# سجلات}} محدّثة",
+        "close": "إغلاق",
+        "searchError": "فشل البحث عن المستخدمين. يرجى المحاولة مرة أخرى.",
+        "loadFinesError": "فشل تحميل الغرامات. يرجى المحاولة مرة أخرى.",
+        "collectionSuccess": "تم تحصيل {amount} ريال عماني بنجاح",
+        "collectionError": "فشل تحصيل الرسوم. يرجى المحاولة مرة أخرى."
       }
     }
   },
@@ -487,13 +595,45 @@
       },
       "export": "تصدير",
       "reportsGenerated": "التقارير المُنشأة",
+      "count": "العدد",
       "categories": {
         "fiction": "خيال",
+        "Fiction": "خيال",
         "nonFiction": "غير خيالي",
+        "Non-Fiction": "غير خيالي",
         "reference": "مرجع",
+        "Reference": "مرجع",
         "science": "علوم",
+        "Science": "علوم",
         "history": "تاريخ",
-        "art": "فن"
+        "History": "تاريخ",
+        "art": "فن",
+        "Art": "فن",
+        "History & Geography": "التاريخ والجغرافيا",
+        "Literature": "الأدب",
+        "Social Sciences": "العلوم الاجتماعية",
+        "Sciences": "العلوم",
+        "Technology": "التكنولوجيا",
+        "Philosophy & Psychology": "الفلسفة وعلم النفس",
+        "Arts & Recreation": "الفنون والترفيه",
+        "Religion": "الدين",
+        "Language": "اللغة",
+        "General Works": "أعمال عامة",
+        "Uncategorized": "غير مصنف"
+      },
+      "categoriesShort": {
+        "fiction": "خيال",
+        "Fiction": "خيال",
+        "nonFiction": "واقع",
+        "Non-Fiction": "واقع",
+        "reference": "مرجع",
+        "Reference": "مرجع",
+        "science": "علوم",
+        "Science": "علوم",
+        "history": "تاريخ",
+        "History": "تاريخ",
+        "art": "فن",
+        "Art": "فن"
       },
       "months": {
         "jan": "يناير",
@@ -561,5 +701,407 @@
     "loading": "جاري تحميل التقارير...",
     "error": "فشل تحميل التقارير",
     "retry": "إعادة المحاولة"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "إدارة تفضيلاتك وإعداداتك",
+    "tabs": {
+      "general": "عام",
+      "appearance": "المظهر",
+      "notifications": "الإشعارات",
+      "security": "الأمان",
+      "system": "النظام"
+    },
+    "general": {
+      "profile": {
+        "title": "المعلومات الشخصية",
+        "description": "إدارة معلوماتك الشخصية وتفضيلات العرض",
+        "displayName": "اسم العرض",
+        "displayNameDesc": "سيظهر هذا الاسم عبر التطبيق",
+        "displayNamePlaceholder": "أدخل اسمك المفضل"
+      },
+      "language": {
+        "title": "اللغة والمنطقة",
+        "description": "تكوين اللغة وتنسيقات التاريخ والوقت",
+        "interface": "لغة الواجهة",
+        "interfaceDesc": "اختر لغتك المفضلة للتطبيق",
+        "dateFormat": "تنسيق التاريخ",
+        "timeFormat": "تنسيق الوقت"
+      },
+      "defaults": {
+        "title": "التفضيلات الافتراضية",
+        "description": "تعيين الإعدادات والتفضيلات الافتراضية",
+        "landingPage": "الصفحة الافتراضية",
+        "landingPageDesc": "الصفحة التي تظهر عند تسجيل الدخول",
+        "itemsPerPage": "عدد العناصر في الصفحة",
+        "itemsPerPageDesc": "عدد العناصر المعروضة في القوائم",
+        "viewMode": "وضع العرض الافتراضي",
+        "viewModeDesc": "طريقة العرض المفضلة للقوائم"
+      },
+      "pages": {
+        "dashboard": "لوحة التحكم",
+        "catalog": "الفهرس",
+        "circulation": "الإعارات",
+        "reports": "التقارير"
+      },
+      "viewModes": {
+        "grid": "عرض الشبكة",
+        "list": "عرض القائمة",
+        "table": "عرض الجدول"
+      }
+    },
+    "appearance": {
+      "theme": {
+        "title": "السمة",
+        "description": "تخصيص المظهر المرئي للتطبيق",
+        "label": "نظام الألوان",
+        "light": "فاتح",
+        "dark": "داكن",
+        "auto": "تلقائي (النظام)"
+      },
+      "layout": {
+        "title": "التخطيط والكثافة",
+        "description": "ضبط تفضيلات المسافات والتخطيط"
+      },
+      "density": {
+        "label": "كثافة الواجهة",
+        "compact": "مضغوط",
+        "default": "افتراضي",
+        "comfortable": "مريح"
+      },
+      "animation": {
+        "label": "سرعة الحركة",
+        "none": "بدون",
+        "reduced": "مخفضة",
+        "default": "افتراضي",
+        "fast": "سريع"
+      },
+      "breadcrumbs": {
+        "label": "إظهار مسار التنقل",
+        "description": "عرض مسار التنقل في أعلى الصفحات"
+      },
+      "typography": {
+        "title": "الطباعة",
+        "description": "ضبط حجم ومظهر النص"
+      },
+      "fontSize": {
+        "label": "حجم الخط",
+        "small": "صغير",
+        "medium": "متوسط",
+        "large": "كبير",
+        "extraLarge": "كبير جداً"
+      }
+    },
+    "notifications": {
+      "email": {
+        "title": "إشعارات البريد الإلكتروني",
+        "description": "تكوين التحديثات التي تتلقاها عبر البريد",
+        "systemAnnouncements": "الإعلانات النظامية",
+        "dueDateReminders": "تذكيرات موعد الاستحقاق",
+        "overdueNotifications": "إشعارات التأخير",
+        "newRequests": "طلبات الإعارة الجديدة"
+      },
+      "inApp": {
+        "title": "الإشعارات داخل التطبيق",
+        "description": "إدارة الإشعارات داخل التطبيق",
+        "enabled": "تفعيل الإشعارات",
+        "sound": "أصوات الإشعارات",
+        "badges": "عدادات الشارات",
+        "position": "موضع الإشعار",
+        "autoDismiss": "وقت الإخفاء التلقائي"
+      },
+      "position": {
+        "topRight": "أعلى اليمين",
+        "topCenter": "أعلى الوسط",
+        "bottomRight": "أسفل اليمين"
+      }
+    },
+    "security": {
+      "authentication": {
+        "title": "المصادقة",
+        "description": "إدارة إعدادات أمان حسابك"
+      },
+      "twoFactor": {
+        "label": "المصادقة الثنائية",
+        "description": "إضافة طبقة إضافية من الأمان لحسابك"
+      },
+      "session": {
+        "title": "إدارة الجلسات",
+        "description": "التحكم في جلساتك النشطة والمهلات",
+        "timeout": "مهلة الجلسة",
+        "timeoutDesc": "تسجيل الخروج تلقائياً بعد فترة عدم النشاط"
+      }
+    },
+    "system": {
+      "data": {
+        "title": "إدارة البيانات",
+        "description": "تصدير وإدارة بياناتك",
+        "export": "تصدير بياناتي"
+      },
+      "cache": {
+        "title": "ذاكرة التخزين المؤقت والأداء",
+        "description": "مسح البيانات المخزنة مؤقتاً لتحسين الأداء",
+        "clear": "مسح التخزين المؤقت",
+        "cleared": "تم مسح التخزين المؤقت",
+        "clearedDesc": "تم مسح ذاكرة التخزين المؤقت للتطبيق بنجاح"
+      },
+      "export": {
+        "title": "تم تصدير البيانات",
+        "description": "تم تحضير تصدير بياناتك"
+      }
+    },
+    "footer": {
+      "unsavedChanges": "لديك تغييرات غير محفوظة",
+      "allSaved": "تم حفظ جميع التغييرات",
+      "resetDefaults": "إعادة التعيين إلى الافتراضي"
+    },
+    "reset": {
+      "title": "إعادة تعيين الإعدادات",
+      "description": "هل أنت متأكد من رغبتك في إعادة تعيين جميع الإعدادات إلى قيمها الافتراضية؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "إعادة التعيين إلى الافتراضي"
+    }
+  },
+  "patron": {
+    "nav": {
+      "dashboard": "الرئيسية",
+      "catalog": "تصفح الكتب",
+      "myLoans": "إعاراتي",
+      "myRequests": "طلباتي",
+      "myProfile": "ملفي الشخصي",
+      "patronLabel": "قارئ",
+      "darkMode": "الوضع الداكن",
+      "lightMode": "الوضع الفاتح",
+      "language": "اللغة",
+      "logout": "تسجيل الخروج"
+    },
+    "dashboard": {
+      "title": "مرحباً بعودتك، {name}",
+      "subtitle": "نظرة عامة على حسابك في المكتبة",
+      "quickStats": {
+        "activeLoans": "الإعارات النشطة",
+        "overdueBooks": "متأخرة",
+        "totalBorrowed": "إجمالي الاستعارات",
+        "activeRequests": "الطلبات النشطة"
+      },
+      "quickActions": {
+        "title": "إجراءات سريعة",
+        "browseCatalog": "تصفح الكتب",
+        "viewMyLoans": "عرض إعاراتي",
+        "viewMyRequests": "عرض طلباتي",
+        "editProfile": "تعديل الملف الشخصي"
+      },
+      "recentActivity": {
+        "title": "النشاطات الأخيرة",
+        "empty": "لا توجد نشاطات حديثة"
+      },
+      "activity": {
+        "status": {
+          "active": "نشط",
+          "overdue": "متأخر",
+          "returned": "تم الإرجاع",
+          "reserved": "محجوز",
+          "pending": "قيد الانتظار"
+        }
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل بيانات لوحة التحكم"
+      }
+    },
+    "catalog": {
+      "title": "تصفح الكتب",
+      "subtitle": "ابحث واكتشف الكتب",
+      "search": {
+        "placeholder": "ابحث بالعنوان أو المؤلف أو ISBN...",
+        "button": "بحث",
+        "results": "تم العثور على {count} كتاب",
+        "noResults": "لم يتم العثور على كتب تطابق بحثك"
+      },
+      "filters": {
+        "toggle": "الفلاتر",
+        "category": "الفئة",
+        "status": "التوفر",
+        "allStatus": "جميع الحالات",
+        "allCategories": "جميع الفئات",
+        "available": "متاح",
+        "borrowed": "مستعار",
+        "reserved": "محجوز",
+        "clear": "مسح الفلاتر"
+      },
+      "status": {
+        "available": "متاح",
+        "borrowed": "مستعار",
+        "reserved": "محجوز"
+      },
+      "requestBook": "طلب الكتاب",
+      "joinWaitlist": "الانضمام لقائمة الانتظار",
+      "requesting": "جارٍ الطلب...",
+      "requestSuccess": "تم طلب الكتاب '{title}' بنجاح!",
+      "noBooksFound": "لم يتم العثور على كتب",
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "pageInfo": "صفحة {current} من {total}"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الكتب",
+        "authError": "فشل المصادقة. يرجى تسجيل الدخول مرة أخرى.",
+        "networkError": "خطأ في الشبكة. يرجى التحقق من اتصال الإنترنت.",
+        "alreadyRequested": "لديك بالفعل طلب نشط لهذا الكتاب",
+        "requestFailed": "فشل طلب الكتاب"
+      }
+    },
+    "loans": {
+      "title": "إعاراتي",
+      "subtitle": "عرض الكتب المستعارة",
+      "tabs": {
+        "active": "الإعارات النشطة",
+        "history": "سجل الإعارات"
+      },
+      "table": {
+        "book": "الكتاب",
+        "checkoutDate": "تاريخ الاستعارة",
+        "dueDate": "تاريخ الإرجاع",
+        "returnDate": "تم الإرجاع",
+        "status": "الحالة",
+        "fine": "الغرامة",
+        "actions": "الإجراءات"
+      },
+      "status": {
+        "active": "نشط",
+        "overdue": "متأخر",
+        "returned": "تم الإرجاع",
+        "dueSoon": "موعد قريب"
+      },
+      "stats": {
+        "active": "نشطة",
+        "overdue": "متأخرة",
+        "returned": "مرتجعة"
+      },
+      "renew": "تجديد",
+      "renewing": "جارٍ التجديد...",
+      "renewSuccess": "تم تجديد الإعارة بنجاح! الموعد الجديد: {date}",
+      "renewalsRemaining": "{count} تجديد متبقي",
+      "maxRenewalsReached": "تم الوصول للحد الأقصى من التجديدات",
+      "cannotRenewOverdue": "لا يمكن تجديد الإعارات المتأخرة",
+      "daysRemaining": "{days} يوم متبقي",
+      "dueToday": "موعد اليوم",
+      "filterByStatus": "تصفية حسب الحالة",
+      "allLoans": "جميع الإعارات",
+      "noLoans": "لا توجد إعارات",
+      "noLoansSubtitle": "تصفح الكتب لاستعارة كتب",
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "pageInfo": "صفحة {current} من {total}"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الإعارات",
+        "renewFailed": "فشل تجديد الإعارة"
+      },
+      "fineBreakdown": {
+        "title": "تفاصيل الغرامة",
+        "overdueDays": "أيام التأخير",
+        "days": "أيام",
+        "dailyRate": "السعر اليومي",
+        "calculation": "الحساب",
+        "cappedAt": "محدد بحد أقصى {max} ريال",
+        "totalFine": "إجمالي الغرامة",
+        "paid": "مدفوعة"
+      }
+    },
+    "profile": {
+      "title": "ملفي الشخصي",
+      "subtitle": "إدارة معلومات حسابك",
+      "tabs": {
+        "info": "المعلومات الشخصية",
+        "stats": "الإحصائيات",
+        "security": "الأمان"
+      },
+      "info": {
+        "title": "المعلومات الشخصية",
+        "email": "البريد الإلكتروني",
+        "fullName": "الاسم الكامل",
+        "phone": "رقم الهاتف",
+        "address": "العنوان",
+        "memberSince": "عضو منذ",
+        "notProvided": "غير مقدم",
+        "emailCannotChange": "لا يمكن تغيير البريد الإلكتروني"
+      },
+      "stats": {
+        "title": "إحصائياتك",
+        "totalBorrowed": "إجمالي الاستعارات",
+        "activeLoans": "الإعارات النشطة",
+        "overdueBooks": "الكتب المتأخرة",
+        "totalFinesPaid": "إجمالي الغرامات المدفوعة"
+      },
+      "account": {
+        "title": "معلومات الحساب",
+        "accountType": "نوع الحساب",
+        "accountId": "معرف الحساب"
+      },
+      "editProfile": "تعديل الملف الشخصي",
+      "saveChanges": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "saving": "جارٍ الحفظ...",
+      "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
+      "validation": {
+        "nameRequired": "الاسم الكامل مطلوب"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الملف الشخصي",
+        "updateFailed": "فشل تحديث الملف الشخصي"
+      }
+    },
+    "requests": {
+      "title": "طلباتي",
+      "subtitle": "حجوزات وطلبات الكتب",
+      "table": {
+        "book": "الكتاب",
+        "requestDate": "تاريخ الطلب",
+        "expiryDate": "الاستلام قبل",
+        "status": "الحالة",
+        "notes": "ملاحظات",
+        "actions": "الإجراءات"
+      },
+      "status": {
+        "pending": "قيد الانتظار",
+        "reserved": "محجوز",
+        "fulfilled": "تم التنفيذ",
+        "cancelled": "ملغى"
+      },
+      "stats": {
+        "pending": "قيد الانتظار",
+        "reserved": "محجوزة",
+        "fulfilled": "منفذة",
+        "cancelled": "ملغاة"
+      },
+      "daysRemaining": "{days} يوم متبقي",
+      "expired": "منتهية",
+      "filterByStatus": "تصفية حسب الحالة",
+      "allRequests": "جميع الطلبات",
+      "cancelRequest": "إلغاء",
+      "cancelling": "جارٍ الإلغاء...",
+      "confirmCancel": "هل أنت متأكد من إلغاء طلب '{title}'؟",
+      "cancelSuccess": "تم إلغاء الطلب بنجاح",
+      "noRequests": "لا توجد طلبات",
+      "noRequestsSubtitle": "تصفح الكتب لطلب كتب",
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "pageInfo": "صفحة {current} من {total}"
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الطلبات",
+        "cannotCancel": "لا يمكن إلغاء هذا الطلب",
+        "cancelFailed": "فشل إلغاء الطلب"
+      }
+    },
+    "common": {
+      "loading": "جار التحميل...",
+      "error": "حدث خطأ",
+      "retry": "إعادة المحاولة",
+      "goBack": "العودة",
+      "noCover": "لا توجد صورة غلاف"
+    }
   }
 }

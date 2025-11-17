@@ -1,15 +1,16 @@
 "use client"
 
-import { Plus, RotateCcw, Download } from "lucide-react"
+import { Plus, RotateCcw, Download, DollarSign } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 interface CirculationHeaderProps {
   onIssueClick: () => void
   onReturnClick: () => void
+  onCollectFeesClick: () => void
   onExportClick: () => void
 }
 
-export default function CirculationHeader({ onIssueClick, onReturnClick, onExportClick }: CirculationHeaderProps) {
+export default function CirculationHeader({ onIssueClick, onReturnClick, onCollectFeesClick, onExportClick }: CirculationHeaderProps) {
   const t = useTranslations("circulation")
 
   return (
@@ -28,6 +29,14 @@ export default function CirculationHeader({ onIssueClick, onReturnClick, onExpor
       >
         <RotateCcw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
         <span>{t("actions.returnBook")}</span>
+      </button>
+
+      <button
+        onClick={onCollectFeesClick}
+        className="group border-2 border-green-600 text-green-700 hover:bg-green-600 hover:text-white font-semibold px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-300 hover:shadow-lg"
+      >
+        <DollarSign className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+        <span>{t("actions.collectFees")}</span>
       </button>
 
       <button

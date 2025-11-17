@@ -11,6 +11,7 @@ import SearchAndFilters from "@/components/circulation/SearchAndFilters"
 import CirculationTable from "@/components/circulation/CirculationTable"
 import IssueBookModal from "@/components/circulation/IssueBookModal"
 import ReturnBookModal from "@/components/circulation/ReturnBookModal"
+import FeeCollectionModal from "@/components/circulation/FeeCollectionModal"
 
 export default function CirculationPage() {
   const t = useTranslations("circulation")
@@ -21,6 +22,8 @@ export default function CirculationPage() {
   // State for modals
   const [showIssueModal, setShowIssueModal] = useState(false)
   const [showReturnModal, setShowReturnModal] = useState(false)
+  const [showFeeCollectionModal, setShowFeeCollectionModal] = useState(false)
+  const [selectedUserForFee, setSelectedUserForFee] = useState<{userId: string, userName: string} | null>(null)
 
   // State for filters and search
   const [searchTerm, setSearchTerm] = useState("")
@@ -49,6 +52,8 @@ export default function CirculationPage() {
       dueDate: "Jan 30, 2025",
       daysLeft: 5,
       status: "active" as const,
+      fineAmount: 0,
+      finePaid: false,
     },
     {
       id: "2",
@@ -62,6 +67,8 @@ export default function CirculationPage() {
       dueDate: "Jan 25, 2025",
       daysLeft: -2,
       status: "overdue" as const,
+      fineAmount: 1.000,
+      finePaid: false,
     },
     {
       id: "3",
@@ -75,6 +82,8 @@ export default function CirculationPage() {
       dueDate: "Feb 5, 2025",
       daysLeft: 16,
       status: "active" as const,
+      fineAmount: 0,
+      finePaid: false,
     },
     {
       id: "4",
@@ -88,6 +97,8 @@ export default function CirculationPage() {
       dueDate: "Jan 23, 2025",
       daysLeft: -5,
       status: "overdue" as const,
+      fineAmount: 2.500,
+      finePaid: false,
     },
     {
       id: "5",
@@ -101,6 +112,8 @@ export default function CirculationPage() {
       dueDate: "Feb 2, 2025",
       daysLeft: 9,
       status: "active" as const,
+      fineAmount: 0,
+      finePaid: false,
     },
     {
       id: "6",
@@ -114,6 +127,8 @@ export default function CirculationPage() {
       dueDate: "Feb 6, 2025",
       daysLeft: 14,
       status: "active" as const,
+      fineAmount: 0,
+      finePaid: false,
     },
     {
       id: "7",
@@ -127,6 +142,8 @@ export default function CirculationPage() {
       dueDate: "Jan 16, 2025",
       daysLeft: -11,
       status: "overdue" as const,
+      fineAmount: 5.500,
+      finePaid: false,
     },
     {
       id: "8",
@@ -140,6 +157,8 @@ export default function CirculationPage() {
       dueDate: "Feb 3, 2025",
       daysLeft: 11,
       status: "active" as const,
+      fineAmount: 0,
+      finePaid: false,
     },
   ]
 
@@ -193,6 +212,12 @@ export default function CirculationPage() {
     console.log("Exporting circulation records...")
   }
 
+  // Handle fee collection from table row
+  const handleCollectFeeFromTable = (userId: string, userName: string) => {
+    setSelectedUserForFee({ userId, userName })
+    setShowFeeCollectionModal(true)
+  }
+
   return (
     <AdminLayout>
       <div className="space-y-6 bg-[#F5F1E8] min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -214,6 +239,7 @@ export default function CirculationPage() {
         <CirculationHeader
           onIssueClick={() => setShowIssueModal(true)}
           onReturnClick={() => setShowReturnModal(true)}
+          onCollectFeesClick={() => setShowFeeCollectionModal(true)}
           onExportClick={handleExport}
         />
 
@@ -229,7 +255,10 @@ export default function CirculationPage() {
         />
 
         {/* Circulation Records Table */}
-        <CirculationTable records={paginatedRecords} />
+        <CirculationTable
+          records={paginatedRecords}
+          onCollectFee={handleCollectFeeFromTable}
+        />
 
         {/* Pagination */}
         {totalPages > 0 && (
@@ -256,6 +285,18 @@ export default function CirculationPage() {
           <ReturnBookModal
             isOpen={showReturnModal}
             onClose={() => setShowReturnModal(false)}
+          />
+        )}
+
+        {showFeeCollectionModal && (
+          <FeeCollectionModal
+            isOpen={showFeeCollectionModal}
+            onClose={() => setShowFeeCollectionModal(false)}
+            onCollectionComplete={() => {
+              // Refresh data after successful collection
+              // TODO: Reload statistics or circulation data
+              console.log("Fee collection completed")
+            }}
           />
         )}
       </div>

@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Grid3x3, List, X } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
+import type { CategoryWithCount } from "@/lib/types/books"
 
 interface SearchAndFiltersProps {
   searchTerm: string
@@ -13,7 +14,7 @@ interface SearchAndFiltersProps {
   onCategoryChange: (category: string | null) => void
   selectedStatus: string | null
   onStatusChange: (status: string | null) => void
-  categories: string[]
+  categories: CategoryWithCount[]
   viewMode: "grid" | "list"
   onViewModeChange: (mode: "grid" | "list") => void
 }
@@ -32,6 +33,8 @@ export function SearchAndFilters({
   const t = useTranslations("books")
   const tFilters = useTranslations("books.filters")
   const tStatus = useTranslations("books.status")
+  const locale = useLocale()
+  const isRTL = locale === 'ar'
 
   const hasActiveFilters = searchTerm !== "" || selectedCategory !== null || selectedStatus !== null
 
@@ -59,8 +62,8 @@ export function SearchAndFilters({
           <SelectContent className="bg-white">
             <SelectItem value="all">{tFilters("allCategories")}</SelectItem>
             {categories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
+              <SelectItem key={cat.id} value={cat.id}>
+                {isRTL ? cat.name_ar || cat.name : cat.name}
               </SelectItem>
             ))}
           </SelectContent>

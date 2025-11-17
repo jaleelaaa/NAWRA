@@ -71,8 +71,13 @@ export default function LoginForm() {
       setUser(response.user);
       setTokens(response.tokens.access_token, response.tokens.refresh_token);
 
-      // Redirect to dashboard (locale is automatically preserved by i18n router)
-      router.push('/dashboard');
+      // Redirect based on user type
+      // Patrons go to patron portal, all others go to dashboard
+      if (response.user.user_type === 'patron') {
+        router.push('/patron');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error: any) {
       // Handle different error types
       if (error.response?.status === 401) {
@@ -174,7 +179,7 @@ export default function LoginForm() {
         </div>
         <a
           href="#"
-          className="text-sm text-cyan-700 hover:text-cyan-800 font-medium"
+          className="text-sm text-[#CE1126] hover:text-[#A00E1E] font-medium"
         >
           {t('forgotPassword')}
         </a>
@@ -183,7 +188,7 @@ export default function LoginForm() {
       {/* Submit Button */}
       <Button
         type="submit"
-        className="w-full bg-cyan-700 hover:bg-cyan-800"
+        className="w-full bg-[#CE1126] hover:bg-[#A00E1E]"
         disabled={isLoading}
       >
         {isLoading ? (
@@ -199,7 +204,7 @@ export default function LoginForm() {
       {/* Request Access */}
       <div className="text-center text-sm">
         <span className="text-gray-600">{t('noAccount')} </span>
-        <a href="#" className="text-cyan-700 hover:text-cyan-800 font-medium">
+        <a href="#" className="text-[#CE1126] hover:text-[#A00E1E] font-medium">
           {t('requestAccess')}
         </a>
       </div>

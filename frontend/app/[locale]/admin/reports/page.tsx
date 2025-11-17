@@ -111,72 +111,97 @@ export default function ReportsPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 bg-[#F5F1E8] min-h-screen p-6" dir={isRTL ? 'rtl' : 'ltr'}>
-        {/* Breadcrumb */}
-        <Breadcrumb
-          items={[
-            { label: tn('dashboard'), href: '/dashboard' },
-            { label: t('breadcrumb') }
-          ]}
-        />
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F1E8] via-[#FAF8F3] to-[#F5F1E8] p-6 sm:p-8" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="max-w-[1600px] mx-auto space-y-8">
+          {/* Breadcrumb */}
+          <div className="animate-fadeIn">
+            <Breadcrumb
+              items={[
+                { label: tn('dashboard'), href: '/dashboard' },
+                { label: t('breadcrumb') }
+              ]}
+            />
+          </div>
 
-        {/* Page Header */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-[#8B1538]">
-            {t('title')}
-          </h1>
-          <p className="text-[#6B7280]">
-            {t('subtitle')}
-          </p>
+          {/* Page Header */}
+          <div className="space-y-3 animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#8B1538] to-[#A61D45]">
+              {t('title')}
+            </h1>
+            <p className="text-lg text-gray-600 max-w-3xl">
+              {t('subtitle')}
+            </p>
+            <div className="h-1 w-24 bg-gradient-to-r from-[#8B1538] to-[#A61D45] rounded-full"></div>
+          </div>
+
+          {/* Statistics Cards */}
+          <section
+            aria-label={locale === 'ar' ? 'إحصائيات التقارير' : 'Reports statistics'}
+            className="animate-fadeIn"
+            style={{ animationDelay: '0.2s' }}
+          >
+            <ReportStatsCards stats={dashboardStats} isLoading={statsLoading} />
+          </section>
+
+          {/* Report Type Selector */}
+          <section
+            aria-label={locale === 'ar' ? 'اختيار نوع التقرير' : 'Report type selection'}
+            className="animate-fadeIn"
+            style={{ animationDelay: '0.3s' }}
+          >
+            <ReportTypeSelector
+              selectedType={selectedReportType}
+              onSelectType={setSelectedReportType}
+            />
+          </section>
+
+          {/* Filters Section */}
+          <section
+            aria-label={locale === 'ar' ? 'فلاتر التقارير' : 'Report filters'}
+            className="animate-fadeIn"
+            style={{ animationDelay: '0.4s' }}
+          >
+            <ReportFilters
+              onFiltersChange={handleFiltersChange}
+              onGenerate={handleGenerateReport}
+              isLoading={summaryLoading}
+            />
+          </section>
+
+          {/* Charts Section */}
+          <section
+            aria-label={locale === 'ar' ? 'رسوم بيانية' : 'Charts'}
+            className="animate-fadeIn"
+            style={{ animationDelay: '0.5s' }}
+          >
+            <ReportCharts
+              trendData={trendsData?.data}
+              distributionData={distributionData?.data}
+              onExportChart={handleExportChart}
+            />
+          </section>
+
+          {/* Summary Table */}
+          <section
+            aria-label={locale === 'ar' ? 'ملخص التقارير' : 'Report summary'}
+            className="animate-fadeIn"
+            style={{ animationDelay: '0.6s' }}
+          >
+            <ReportSummaryTable
+              items={summaryData?.items}
+              totalItems={summaryData?.total}
+              currentPage={currentPage}
+              itemsPerPage={8}
+              onPageChange={handlePageChange}
+              onView={handleViewReport}
+              onDownload={handleDownloadSingleReport}
+              onDelete={handleDeleteReport}
+              onExportTable={handleExportTable}
+              onDownloadAll={handleDownloadReport}
+              isLoading={summaryLoading}
+            />
+          </section>
         </div>
-
-        {/* Statistics Cards */}
-        <section aria-label={locale === 'ar' ? 'إحصائيات التقارير' : 'Reports statistics'}>
-          <ReportStatsCards stats={dashboardStats} isLoading={statsLoading} />
-        </section>
-
-        {/* Report Type Selector */}
-        <section aria-label={locale === 'ar' ? 'اختيار نوع التقرير' : 'Report type selection'}>
-          <ReportTypeSelector
-            selectedType={selectedReportType}
-            onSelectType={setSelectedReportType}
-          />
-        </section>
-
-        {/* Filters Section */}
-        <section aria-label={locale === 'ar' ? 'فلاتر التقارير' : 'Report filters'}>
-          <ReportFilters
-            onFiltersChange={handleFiltersChange}
-            onGenerate={handleGenerateReport}
-            isLoading={summaryLoading}
-          />
-        </section>
-
-        {/* Charts Section */}
-        <section aria-label={locale === 'ar' ? 'رسوم بيانية' : 'Charts'}>
-          <ReportCharts
-            trendData={trendsData?.data}
-            distributionData={distributionData?.data}
-            onExportChart={handleExportChart}
-          />
-        </section>
-
-        {/* Summary Table */}
-        <section aria-label={locale === 'ar' ? 'ملخص التقارير' : 'Report summary'}>
-          <ReportSummaryTable
-            items={summaryData?.items}
-            totalItems={summaryData?.total}
-            currentPage={currentPage}
-            itemsPerPage={8}
-            onPageChange={handlePageChange}
-            onView={handleViewReport}
-            onDownload={handleDownloadSingleReport}
-            onDelete={handleDeleteReport}
-            onExportTable={handleExportTable}
-            onDownloadAll={handleDownloadReport}
-            isLoading={summaryLoading}
-          />
-        </section>
       </div>
     </AdminLayout>
   );

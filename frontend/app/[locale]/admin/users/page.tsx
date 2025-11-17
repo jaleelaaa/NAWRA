@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdminLayout from '@/components/AdminLayout';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import { StatsBar } from '@/components/users/StatsBar';
 import { StatsBarSkeleton } from '@/components/users/UserCardSkeleton';
 import { ActionBar } from '@/components/users/ActionBar';
@@ -16,10 +17,12 @@ import { useTranslations, useLocale } from 'next-intl';
 import type { DashboardUser, ViewMode } from '@/lib/types/users';
 import type { SortField, SortOrder } from '@/components/users/SortDropdown';
 import { getUsers, getUserStats, createUser, updateUser, deleteUser, exportUsers } from '@/lib/api/users';
+import { collectUserFines } from '@/lib/api/circulation';
 import { queryKeys } from '@/lib/api/queryClient';
 import { handleApiError } from '@/lib/api/client';
 import type { UserDetail, UserFilters as ApiUserFilters } from '@/lib/api/types';
 import { useToast } from '@/hooks/use-toast';
+import { PERMISSIONS } from '@/lib/permissions';
 
 // Normalize database role names to translation keys
 function normalizeRole(dbRole: string): 'admin' | 'librarian' | 'teacher' | 'student' | 'patron' | 'cataloger' | 'circulation_staff' | 'administrator' {
@@ -68,6 +71,11 @@ export default function UsersPage() {
   const isRTL = locale === 'ar';
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // Helper function to get display name based on locale
+  const getDisplayName = (user: DashboardUser) => {
+    return (locale === 'ar' && user.arabic_name) ? user.arabic_name : user.full_name;
+  };
 
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -246,6 +254,47 @@ export default function UsersPage() {
     }
   };
 
+  const handleCollectFine = async (user: DashboardUser) => {
+    try {
+      if (user.fines <= 0) {
+        toast({
+          title: t('notifications.info'),
+          description: 'No outstanding fines for this user',
+        });
+        return;
+      }
+
+      toast({
+        title: t('notifications.info'),
+        description: `Collecting fine of ${new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'OMR'
+        }).format(user.fines)} from ${getDisplayName(user)}...`,
+      });
+
+      // Call the API to collect fines
+      const result = await collectUserFines(user.id);
+
+      toast({
+        title: t('notifications.success'),
+        description: result.message || `Successfully collected ${new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'OMR'
+        }).format(result.total_collected)} from ${getDisplayName(user)}`,
+      });
+
+      // Refresh the user list
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+    } catch (error) {
+      const message = handleApiError(error);
+      toast({
+        variant: 'destructive',
+        title: t('notifications.error'),
+        description: message,
+      });
+    }
+  };
+
   const handleExport = async () => {
     try {
       toast({
@@ -409,7 +458,8 @@ export default function UsersPage() {
   // Show loading state with skeletons
   if (usersLoading) {
     return (
-      <AdminLayout>
+      <ProtectedRoute requiredPermissions={[PERMISSIONS.USERS.READ]}>
+        <AdminLayout>
         <div className="space-y-6 bg-[#F5F1E8] min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
           {/* Header */}
           <div className="space-y-2">
@@ -429,13 +479,15 @@ export default function UsersPage() {
           <UserCardSkeletonGrid count={itemsPerPage} />
         </div>
       </AdminLayout>
+      </ProtectedRoute>
     );
   }
 
   // Show error state
   if (usersError) {
     return (
-      <AdminLayout>
+      <ProtectedRoute requiredPermissions={[PERMISSIONS.USERS.READ]}>
+        <AdminLayout>
         <div className="flex items-center justify-center min-h-screen bg-[#F5F1E8]">
           <div className="text-center max-w-md p-8 bg-white rounded-xl shadow-sm">
             <div className="text-[#DC2626] text-5xl mb-4">⚠️</div>
@@ -450,11 +502,13 @@ export default function UsersPage() {
           </div>
         </div>
       </AdminLayout>
+      </ProtectedRoute>
     );
   }
 
   return (
-    <AdminLayout>
+    <ProtectedRoute requiredPermissions={[PERMISSIONS.USERS.READ]}>
+      <AdminLayout>
       <div className="space-y-6 bg-[#F5F1E8] min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
         {/* Header */}
         <div className="space-y-2">
@@ -496,6 +550,7 @@ export default function UsersPage() {
               users={allUsers}
               onEditUser={handleEditUser}
               onDeleteUser={handleDeleteUser}
+              onCollectFine={handleCollectFine}
               selectionMode={selectionMode}
               selectedUsers={selectedUsers}
               onToggleUser={handleToggleUser}
@@ -557,5 +612,6 @@ export default function UsersPage() {
         />
       </div>
     </AdminLayout>
+    </ProtectedRoute>
   );
 }

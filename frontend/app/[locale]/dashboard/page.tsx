@@ -40,7 +40,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
       change: '+8%',
       trend: 'up' as const,
       iconName: 'book' as const,
-      color: 'text-green-600',
+      color: 'text-[#009639]',
       bgColor: 'bg-green-50',
       sparklineData: [
         { value: 8200 },
@@ -100,7 +100,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
         {/* Welcome Banner */}
         <section
           aria-label={locale === 'ar' ? 'لافتة الترحيب' : 'Welcome banner'}
-          className="bg-gradient-to-r from-[#8B2635] via-[#A03045] to-[#8B2635] rounded-xl p-3 md:p-4 text-white shadow-xl relative overflow-hidden animate-scale-in"
+          className="bg-gradient-to-r from-[#CE1126] via-[#E01E37] to-[#CE1126] rounded-xl p-3 md:p-4 text-white shadow-xl relative overflow-hidden animate-scale-in"
           style={{ backgroundSize: '200% 200%' }}
         >
           {/* Decorative elements with animations */}

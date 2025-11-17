@@ -10,6 +10,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { SortDropdown, type SortField, type SortOrder } from './SortDropdown';
 import { buttonVariants } from '@/lib/animations';
 import type { ViewMode } from '@/lib/types/users';
+import { useAuthStore } from '@/stores/authStore';
+import { canCreate } from '@/lib/permissions';
 
 interface ActionBarProps {
   viewMode: ViewMode;
@@ -49,6 +51,8 @@ export function ActionBar({
   const t = useTranslations('users');
   const locale = useLocale();
   const isRTL = locale === 'ar';
+  const user = useAuthStore((state) => state.user);
+  const canCreateUser = canCreate(user?.permissions, 'USERS');
 
   const activeFilters = [
     filterRole !== 'all' && { label: `${t('filters.role')}: ${filterRole}`, key: 'role' },
@@ -180,15 +184,17 @@ export function ActionBar({
             </Button>
           )}
 
-          <Button
-            size="sm"
-            onClick={onAddUser}
-            className="bg-[#8B1538] hover:bg-[#A61D45] text-white shadow-lg"
-            aria-label={t('addUser')}
-          >
-            <UserPlus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} aria-hidden="true" />
-            {t('addUser')}
-          </Button>
+          {canCreateUser && (
+            <Button
+              size="sm"
+              onClick={onAddUser}
+              className="bg-[#8B1538] hover:bg-[#A61D45] text-white shadow-lg"
+              aria-label={t('addUser')}
+            >
+              <UserPlus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} aria-hidden="true" />
+              {t('addUser')}
+            </Button>
+          )}
         </div>
       </div>
 
