@@ -102,7 +102,7 @@ jobs:
           echo "Triggering deployment to Render..."
           response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
 
-          if [ $response -eq 200 ] || [ $response -eq 201 ]; then
+          if [ $response -eq 200 ] || [ $response -eq 201 ] || [ $response -eq 202 ]; then
             echo "✅ Deployment triggered successfully!"
             echo "Check your Render dashboard for deployment status:"
             echo "https://dashboard.render.com/web/srv-d49q6uripnbc7397nor0"
