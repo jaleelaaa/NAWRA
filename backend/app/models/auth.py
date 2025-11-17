@@ -32,10 +32,12 @@ class UserResponse(BaseModel):
     id: UUID
     email: str
     full_name: str
+    arabic_name: Optional[str] = Field(None, description="User full name in Arabic")
     role: str
     user_type: str
     is_active: bool
     created_at: datetime
+    permissions: Optional[list[str]] = Field(default=[], description="User permissions")
 
     class Config:
         from_attributes = True

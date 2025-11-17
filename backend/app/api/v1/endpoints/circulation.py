@@ -13,6 +13,7 @@ from ....models.circulation import (
     CirculationStatsResponse
 )
 from ....services.circulation_service import CirculationService
+from ....core.dependencies import get_current_user, require_any_permission, require_permissions
 import csv
 import io
 
@@ -34,10 +35,14 @@ async def get_circulation_records(
     due_date_filter: Optional[str] = Query(None, description="Filter by due date (today, tomorrow, week, overdue)"),
     sort_by: str = Query("issue_date", description="Sort field"),
     sort_order: str = Query("desc", regex="^(asc|desc)$", description="Sort order"),
-    circulation_service: CirculationService = Depends(get_circulation_service)
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkout", "circulation.checkin", "circulation.renew", "loans.view"]))
 ):
     """
     Get paginated list of circulation records with optional filtering and sorting
+
+    **Staff** (with circulation permissions) can view all records.
+    **Patrons** (with loans.view permission) can only view their own loans.
 
     - **page**: Page number (default: 1)
     - **page_size**: Items per page (default: 20, max: 100)
@@ -47,8 +52,15 @@ async def get_circulation_records(
     - **due_date_filter**: Filter by due date (today, tomorrow, week, overdue)
     - **sort_by**: Sort field (issue_date, due_date, etc.)
     - **sort_order**: Sort order (asc or desc)
+
+    **Required permission:** Any of circulation.checkout, circulation.checkin, circulation.renew, or loans.view
     """
     try:
+        # Data isolation: Patrons can only view their own loans
+        user_id_filter = None
+        if current_user.get('user_type') == 'patron':
+            user_id_filter = str(current_user['id'])
+
         result = await circulation_service.get_circulation_records(
             page=page,
             page_size=page_size,
@@ -57,7 +69,8 @@ async def get_circulation_records(
             user_type=user_type,
             due_date_filter=due_date_filter,
             sort_by=sort_by,
-            sort_order=sort_order
+            sort_order=sort_order,
+            user_id=user_id_filter
         )
         return result
     except Exception as e:
@@ -68,7 +81,10 @@ async def get_circulation_records(
 
 
 @router.get("/stats", response_model=CirculationStatsResponse, summary="Get circulation statistics")
-async def get_circulation_stats(circulation_service: CirculationService = Depends(get_circulation_service)):
+async def get_circulation_stats(
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkout", "circulation.checkin", "reports.view"]))
+):
     """
     Get circulation statistics including:
     - Active issues
@@ -80,6 +96,9 @@ async def get_circulation_stats(circulation_service: CirculationService = Depend
     - Average borrow duration
     - Most borrowed books
     - Most active users
+
+    **Staff only** - requires circulation or reports permissions
+    **Required permission:** Any of circulation.checkout, circulation.checkin, or reports.view
     """
     try:
         stats = await circulation_service.get_circulation_stats()
@@ -97,10 +116,14 @@ async def export_circulation_records(
     status: Optional[str] = Query(None, description="Filter by status"),
     user_type: Optional[str] = Query(None, description="Filter by user type"),
     due_date_filter: Optional[str] = Query(None, description="Filter by due date"),
-    circulation_service: CirculationService = Depends(get_circulation_service)
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkout", "circulation.checkin", "reports.view"]))
 ):
     """
     Export circulation records to CSV file with optional filtering
+
+    **Staff only** - requires circulation or reports permissions
+    **Required permission:** Any of circulation.checkout, circulation.checkin, or reports.view
     """
     try:
         # Get all records with filters (no pagination)
@@ -167,10 +190,16 @@ async def export_circulation_records(
 @router.get("/{record_id}", response_model=CirculationDetailResponse, summary="Get circulation record by ID")
 async def get_circulation_record(
     record_id: str,
-    circulation_service: CirculationService = Depends(get_circulation_service)
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkout", "circulation.checkin", "circulation.renew", "loans.view"]))
 ):
     """
     Get single circulation record by ID with detailed information
+
+    **Staff** can view any circulation record.
+    **Patrons** can only view their own circulation records.
+
+    **Required permission:** Any of circulation.checkout, circulation.checkin, circulation.renew, or loans.view
     """
     try:
         record = await circulation_service.get_circulation_record(record_id)
@@ -179,6 +208,15 @@ async def get_circulation_record(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Circulation record not found"
             )
+
+        # Data isolation: Patrons can only view their own records
+        if current_user.get('user_type') == 'patron':
+            if str(record.get('user_id')) != str(current_user['id']):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You can only view your own circulation records"
+                )
+
         return record
     except HTTPException:
         raise
@@ -192,10 +230,13 @@ async def get_circulation_record(
 @router.post("", response_model=CirculationResponse, status_code=status.HTTP_201_CREATED, summary="Issue a book")
 async def issue_book(
     circulation_data: CirculationCreate,
-    circulation_service: CirculationService = Depends(get_circulation_service)
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkout"]))
 ):
     """
     Issue a book to a user (create new circulation record)
+
+    **Staff only** - requires circulation.checkout permission
 
     - **user_id**: User UUID
     - **book_id**: Book UUID
@@ -204,6 +245,8 @@ async def issue_book(
     - **send_email**: Send email notification (default: false)
     - **print_receipt**: Print receipt (default: false)
     - **notes**: Optional notes
+
+    **Required permission:** circulation.checkout
     """
     try:
         record = await circulation_service.issue_book(circulation_data.dict())
@@ -230,14 +273,19 @@ async def issue_book(
 async def return_book(
     record_id: str,
     return_data: CirculationReturn,
-    circulation_service: CirculationService = Depends(get_circulation_service)
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkin"]))
 ):
     """
     Process book return
 
+    **Staff only** - requires circulation.checkin permission
+
     - **return_date**: Return date (defaults to today)
     - **book_condition**: Book condition (good, fair, damaged)
     - **notes**: Optional notes about condition or issues
+
+    **Required permission:** circulation.checkin
     """
     try:
         record = await circulation_service.return_book(record_id, return_data.dict())
@@ -264,12 +312,17 @@ async def return_book(
 async def update_circulation_record(
     record_id: str,
     update_data: CirculationUpdate,
-    circulation_service: CirculationService = Depends(get_circulation_service)
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkout", "circulation.checkin", "circulation.renew"]))
 ):
     """
     Update existing circulation record
 
+    **Staff only** - requires circulation permissions
+
     All fields are optional - only provided fields will be updated
+
+    **Required permission:** Any of circulation.checkout, circulation.checkin, or circulation.renew
     """
     try:
         # Filter out None values
@@ -301,10 +354,15 @@ async def update_circulation_record(
 @router.delete("/{record_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete circulation record")
 async def delete_circulation_record(
     record_id: str,
-    circulation_service: CirculationService = Depends(get_circulation_service)
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.checkout", "circulation.checkin"]))
 ):
     """
     Delete circulation record by ID
+
+    **Staff only** - requires circulation permissions
+
+    **Required permission:** Any of circulation.checkout or circulation.checkin
     """
     try:
         await circulation_service.delete_circulation_record(record_id)
@@ -319,4 +377,143 @@ async def delete_circulation_record(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to delete circulation record: {error_msg}"
+        )
+
+
+@router.post("/fines/collect/{user_id}", summary="Collect fines from user")
+async def collect_user_fines(
+    user_id: str,
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_permissions(["fees.collect"]))
+):
+    """
+    Collect all unpaid fines from a user
+
+    **Staff only** - requires fees.collect permission (Circulation Staff and above)
+
+    This endpoint:
+    - Retrieves all circulation records with unpaid fines for the user
+    - Calculates total fine amount
+    - Marks all fines as paid
+    - Returns payment summary
+
+    **Required permission:** fees.collect
+    """
+    try:
+        result = await circulation_service.collect_user_fines(user_id)
+        return result
+    except Exception as e:
+        error_msg = str(e)
+        if "not found" in error_msg.lower():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found or no fines to collect"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to collect fines: {error_msg}"
+        )
+
+
+@router.post("/{record_id}/renew", summary="Renew a loan")
+async def renew_loan(
+    record_id: str,
+    circulation_service: CirculationService = Depends(get_circulation_service),
+    current_user: dict = Depends(require_any_permission(["circulation.renew", "loans.view"]))
+):
+    """
+    Renew a loan (extend the due date)
+
+    **Staff** (with circulation.renew permission) can renew any loan.
+    **Patrons** (with loans.view permission) can only renew their own loans.
+
+    Business rules:
+    - Loan must be active (not returned)
+    - Maximum 2 renewals per loan
+    - Cannot renew overdue loans
+    - Extends due date by standard loan period (14 days)
+
+    **Required permission:** Any of circulation.renew or loans.view
+    """
+    try:
+        from datetime import datetime, timedelta
+
+        # Get the circulation record
+        record_response = circulation_service.supabase.table('circulation_records').select(
+            '*'
+        ).eq('id', record_id).single().execute()
+
+        if not record_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Circulation record not found"
+            )
+
+        record = record_response.data
+
+        # Data isolation: Patrons can only renew their own loans
+        if current_user.get('user_type') == 'patron':
+            if str(record['user_id']) != str(current_user['id']):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You can only renew your own loans"
+                )
+
+        # Check if already returned
+        if record.get('return_date'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot renew a loan that has already been returned"
+            )
+
+        # Check if overdue
+        due_date = datetime.fromisoformat(record['due_date'].replace('Z', '+00:00'))
+        if due_date < datetime.now(due_date.tzinfo):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot renew an overdue loan. Please return the book and pay any fines."
+            )
+
+        # Check renewal count
+        renewal_count = record.get('renewal_count', 0)
+        if renewal_count >= 2:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Maximum renewal limit (2) reached for this loan"
+            )
+
+        # Calculate new due date (extend by 14 days)
+        new_due_date = due_date + timedelta(days=14)
+
+        # Update record
+        update_data = {
+            'due_date': new_due_date.isoformat(),
+            'renewal_count': renewal_count + 1,
+            'updated_at': datetime.now().isoformat()
+        }
+
+        update_response = circulation_service.supabase.table('circulation_records').update(
+            update_data
+        ).eq('id', record_id).execute()
+
+        if not update_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to renew loan"
+            )
+
+        return {
+            "message": "Loan renewed successfully",
+            "record_id": record_id,
+            "new_due_date": new_due_date.isoformat(),
+            "renewals_remaining": 2 - (renewal_count + 1),
+            "total_renewals": renewal_count + 1
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to renew loan: {str(e)}"
         )

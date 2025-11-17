@@ -4,6 +4,7 @@ Authentication endpoints
 from fastapi import APIRouter, HTTPException, status, Depends
 from ....models.auth import LoginRequest, LoginResponse, UserResponse, TokenResponse
 from ....services.auth_service import AuthService
+from ....core.dependencies import get_current_user as get_current_user_dependency
 
 router = APIRouter()
 
@@ -35,15 +36,20 @@ async def login(login_data: LoginRequest, auth_service: AuthService = Depends(ge
     # Generate tokens
     tokens = auth_service.generate_tokens(user, login_data.remember_me)
 
-    # Prepare user response
+    # Prepare user response with permissions
+    role_info = user.get('roles', {}) if user.get('roles') else {}
+    permissions = role_info.get('permissions', []) if isinstance(role_info, dict) else []
+
     user_response = UserResponse(
         id=user['id'],
         email=user['email'],
         full_name=user['full_name'],
-        role=user.get('roles', {}).get('name', 'Patron') if user.get('roles') else 'Patron',
+        arabic_name=user.get('arabic_name'),
+        role=role_info.get('name', 'Patron') if isinstance(role_info, dict) else 'Patron',
         user_type=user['user_type'],
         is_active=user['is_active'],
-        created_at=user['created_at']
+        created_at=user['created_at'],
+        permissions=permissions
     )
 
     return LoginResponse(
@@ -61,10 +67,24 @@ async def logout():
     return {"message": "Logout successful"}
 
 
-@router.get("/me", summary="Get current user")
-async def get_current_user():
+@router.get("/me", response_model=UserResponse, summary="Get current user")
+async def get_current_user_info(
+    current_user: dict = Depends(get_current_user_dependency)
+):
     """
-    Get current authenticated user information
-    (This will be implemented with proper JWT validation in next iteration)
+    Get current authenticated user information.
+    Validates JWT token and returns user details with permissions.
+
+    Requires valid JWT token in Authorization header.
     """
-    return {"message": "Get current user endpoint"}
+    return UserResponse(
+        id=current_user['id'],
+        email=current_user['email'],
+        full_name=current_user['full_name'],
+        arabic_name=current_user.get('arabic_name'),
+        role=current_user.get('role_name', 'Unknown'),
+        user_type=current_user['user_type'],
+        is_active=current_user['is_active'],
+        created_at=current_user['created_at'],
+        permissions=current_user.get('permissions', [])
+    )

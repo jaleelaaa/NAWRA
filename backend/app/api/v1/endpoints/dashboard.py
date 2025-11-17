@@ -4,6 +4,7 @@ Dashboard endpoints for statistics and overview data
 from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime, timedelta
 from ....db import get_supabase
+from ....core.dependencies import require_any_permission
 from supabase import Client
 
 router = APIRouter()
@@ -15,13 +16,20 @@ def get_db() -> Client:
 
 
 @router.get("/stats", summary="Get dashboard statistics")
-async def get_dashboard_stats(db: Client = Depends(get_db)):
+async def get_dashboard_stats(
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "circulation.checkout", "circulation.checkin", "users.read", "inventory.read"]))
+):
     """
     Get comprehensive dashboard statistics including:
     - Total users count and trend
     - Total books count and trend
     - Books borrowed count and trend
     - Overdue books count and trend
+
+    **Staff only** - requires reports, circulation, users, or inventory permissions
+
+    **Required permission:** Any of reports.view, circulation.checkout, circulation.checkin, users.read, or inventory.read
     """
     try:
         # Get current date and date 30 days ago for trend calculation
@@ -68,19 +76,19 @@ async def get_dashboard_stats(db: Client = Depends(get_db)):
         books_trend = calculate_trend(recent_books_response.count, previous_books_response.count)
 
         # --- BOOKS BORROWED (Currently checked out) ---
-        borrowed_books_response = db.table('transactions').select(
+        borrowed_books_response = db.table('circulation_records').select(
             'id, checkout_date', count='exact'
         ).is_('return_date', 'null').execute()
 
         books_borrowed = borrowed_books_response.count
 
         # Borrowings in last 30 days
-        recent_borrowings_response = db.table('transactions').select(
+        recent_borrowings_response = db.table('circulation_records').select(
             'id', count='exact'
         ).gte('checkout_date', thirty_days_ago.isoformat()).is_('return_date', 'null').execute()
 
         # Borrowings between 60-30 days ago (that were active then)
-        previous_borrowings_response = db.table('transactions').select(
+        previous_borrowings_response = db.table('circulation_records').select(
             'id', count='exact'
         ).gte('checkout_date', sixty_days_ago.isoformat()).lt('checkout_date', thirty_days_ago.isoformat()).execute()
 
@@ -88,14 +96,14 @@ async def get_dashboard_stats(db: Client = Depends(get_db)):
 
         # --- OVERDUE BOOKS ---
         # Books that are checked out and due date has passed
-        overdue_books_response = db.table('transactions').select(
+        overdue_books_response = db.table('circulation_records').select(
             'id, due_date', count='exact'
         ).is_('return_date', 'null').lt('due_date', current_date.isoformat()).execute()
 
         overdue_books = overdue_books_response.count
 
         # Overdue books 30 days ago
-        thirty_days_ago_overdue = db.table('transactions').select(
+        thirty_days_ago_overdue = db.table('circulation_records').select(
             'id', count='exact'
         ).is_('return_date', 'null').lt('due_date', thirty_days_ago.isoformat()).execute()
 
@@ -208,7 +216,7 @@ def generate_overdue_sparkline(db: Client, days: int) -> list:
             date = current_date - timedelta(days=(days - i - 1))
 
             # Count overdue books on that date
-            response = db.table('transactions').select(
+            response = db.table('circulation_records').select(
                 'id', count='exact'
             ).is_('return_date', 'null').lt('due_date', date.isoformat()).execute()
 

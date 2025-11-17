@@ -11,6 +11,7 @@ from ....models.user import (
     UserStatsResponse
 )
 from ....services.user_service import UserService
+from ....core.dependencies import require_permissions
 import csv
 import io
 
@@ -31,7 +32,8 @@ async def get_users(
     is_active: Optional[bool] = Query(None, description="Filter by active status"),
     sort_by: str = Query("created_at", description="Sort field"),
     sort_order: str = Query("desc", regex="^(asc|desc)$", description="Sort order"),
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(require_permissions(["users.read"]))
 ):
     """
     Get paginated list of users with optional filtering and sorting
@@ -63,7 +65,10 @@ async def get_users(
 
 
 @router.get("/stats", response_model=UserStatsResponse, summary="Get user statistics")
-async def get_user_stats(user_service: UserService = Depends(get_user_service)):
+async def get_user_stats(
+    user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(require_permissions(["users.read"]))
+):
     """
     Get user statistics including:
     - Total users
@@ -87,7 +92,8 @@ async def export_users(
     search: Optional[str] = Query(None, description="Search in name, email"),
     role: Optional[str] = Query(None, description="Filter by role"),
     is_active: Optional[bool] = Query(None, description="Filter by active status"),
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(require_permissions(["users.read"]))
 ):
     """
     Export users to CSV file with optional filtering
@@ -152,7 +158,8 @@ async def export_users(
 @router.get("/{user_id}", response_model=UserResponse, summary="Get user by ID")
 async def get_user(
     user_id: str,
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(require_permissions(["users.read"]))
 ):
     """
     Get single user by ID
@@ -177,7 +184,8 @@ async def get_user(
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED, summary="Create new user")
 async def create_user(
     user_data: UserCreate,
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(require_permissions(["users.create"]))
 ):
     """
     Create new user
@@ -212,7 +220,8 @@ async def create_user(
 async def update_user(
     user_id: str,
     user_data: UserUpdate,
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(require_permissions(["users.update"]))
 ):
     """
     Update existing user
@@ -254,7 +263,8 @@ async def update_user(
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete user")
 async def delete_user(
     user_id: str,
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(require_permissions(["users.delete"]))
 ):
     """
     Delete user by ID

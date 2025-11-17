@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Response
 from typing import Optional
 from datetime import datetime, timedelta
 from ....db import get_supabase
+from ....core.dependencies import require_any_permission
 from supabase import Client
 import csv
 import io
@@ -20,13 +21,19 @@ def get_db() -> Client:
 
 
 @router.get("/dashboard", summary="Get reports dashboard statistics")
-async def get_dashboard_stats(db: Client = Depends(get_db)):
+async def get_dashboard_stats(
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
+):
     """
     Get comprehensive dashboard statistics for reports page including:
     - Total reports generated
     - Active data period
     - Export operations
     - Report categories
+
+    **Staff only** - requires reports permissions
+    **Required permission:** Any of reports.view or reports.generate
     """
     # Default date range - 90 days
     start_date = datetime.now() - timedelta(days=90)
@@ -72,12 +79,17 @@ async def get_dashboard_stats(db: Client = Depends(get_db)):
 @router.get("/trends", summary="Get report generation trends over time")
 async def get_report_trends(
     period: str = Query(default="week", regex="^(week|month|year)$", description="Time period"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
 ):
     """
     Get trend data for report generation over time
 
+    **Staff only** - requires reports permissions
+
     - **period**: Time period (week, month, year)
+
+    **Required permission:** Any of reports.view or reports.generate
     """
     try:
         end_date = datetime.now()
@@ -130,11 +142,18 @@ async def get_report_trends(
 
 
 @router.get("/distribution", summary="Get report distribution by category")
-async def get_report_distribution(db: Client = Depends(get_db)):
+async def get_report_distribution(
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
+):
     """
     Get report distribution across different categories
 
+    **Staff only** - requires reports permissions
+
     Returns count of reports/books by category for bar chart
+
+    **Required permission:** Any of reports.view or reports.generate
     """
     category_counts = {}
 
@@ -189,15 +208,20 @@ async def get_report_summary(
     page_size: int = Query(8, ge=1, le=100, description="Items per page"),
     category: Optional[str] = Query(None, description="Filter by category"),
     status: Optional[str] = Query(None, description="Filter by status"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
 ):
     """
     Get paginated list of generated reports with filtering
+
+    **Staff only** - requires reports permissions
 
     - **page**: Page number (default: 1)
     - **page_size**: Items per page (default: 8)
     - **category**: Filter by report category
     - **status**: Filter by status (completed, pending, failed)
+
+    **Required permission:** Any of reports.view or reports.generate
     """
     try:
         # Mock data for report history
@@ -309,13 +333,18 @@ async def get_report_summary(
 async def get_circulation_report(
     from_date: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
     to_date: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
 ):
     """
     Get detailed circulation report with book loans, returns, and trends
 
+    **Staff only** - requires reports permissions
+
     - **from_date**: Start date for report (optional)
     - **to_date**: End date for report (optional)
+
+    **Required permission:** Any of reports.view or reports.generate
     """
     try:
         # Set default date range
@@ -366,13 +395,18 @@ async def get_circulation_report(
 async def get_user_activity_report(
     from_date: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
     to_date: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
 ):
     """
     Get user activity report with registrations and engagement patterns
 
+    **Staff only** - requires reports permissions
+
     - **from_date**: Start date for report (optional)
     - **to_date**: End date for report (optional)
+
+    **Required permission:** Any of reports.view or reports.generate
     """
     try:
         # Set default date range
@@ -427,9 +461,15 @@ async def get_user_activity_report(
 
 
 @router.get("/collection", summary="Get collection report")
-async def get_collection_report(db: Client = Depends(get_db)):
+async def get_collection_report(
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
+):
     """
     Get collection report with overview of library collection organized by category
+
+    **Staff only** - requires reports permissions
+    **Required permission:** Any of reports.view or reports.generate
     """
     try:
         # Fetch books with categories
@@ -477,13 +517,18 @@ async def get_collection_report(db: Client = Depends(get_db)):
 async def get_financial_report(
     from_date: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
     to_date: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
 ):
     """
     Get financial report with fines collected, pending, and waived
 
+    **Staff only** - requires reports permissions
+
     - **from_date**: Start date for report (optional)
     - **to_date**: End date for report (optional)
+
+    **Required permission:** Any of reports.view or reports.generate
     """
     try:
         # Set default date range
@@ -528,15 +573,20 @@ async def export_report(
     format: str = Query(default="csv", regex="^(csv|excel|pdf)$", description="Export format"),
     from_date: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
     to_date: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "reports.generate"]))
 ):
     """
     Export report data in specified format
+
+    **Staff only** - requires reports permissions
 
     - **report_type**: Type of report (circulation, user_activity, collection, financial, overview)
     - **format**: Export format (csv, excel, pdf)
     - **from_date**: Start date for report (optional)
     - **to_date**: End date for report (optional)
+
+    **Required permission:** Any of reports.view or reports.generate
     """
     try:
         # For now, only implement CSV export

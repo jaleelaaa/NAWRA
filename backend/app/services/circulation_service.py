@@ -51,6 +51,63 @@ class CirculationService:
         except Exception:
             return 0.0
 
+    def _calculate_fine_breakdown(self, due_date_str: str, return_date: Optional[date] = None) -> Dict:
+        """
+        Calculate detailed fine breakdown for overdue books
+
+        Returns:
+            - overdue_days: Number of days overdue
+            - daily_rate: Fine rate per day (OMR)
+            - calculated_fine: Calculated fine (overdue_days * daily_rate)
+            - capped_fine: Final fine after applying max cap
+            - fine_amount: Actual fine to charge (capped_fine)
+            - is_capped: Whether the fine hit the maximum cap
+        """
+        try:
+            if isinstance(due_date_str, str):
+                due_date = datetime.fromisoformat(due_date_str.replace('Z', '+00:00')).date()
+            else:
+                due_date = due_date_str
+
+            check_date = return_date if return_date else date.today()
+
+            if check_date <= due_date:
+                return {
+                    'overdue_days': 0,
+                    'daily_rate': self.FINE_PER_DAY,
+                    'calculated_fine': 0.0,
+                    'capped_fine': 0.0,
+                    'fine_amount': 0.0,
+                    'is_capped': False,
+                    'max_fine': self.MAX_FINE
+                }
+
+            overdue_days = (check_date - due_date).days
+            calculated_fine = overdue_days * self.FINE_PER_DAY
+            capped_fine = min(calculated_fine, self.MAX_FINE)
+            is_capped = calculated_fine > self.MAX_FINE
+
+            return {
+                'overdue_days': overdue_days,
+                'daily_rate': self.FINE_PER_DAY,
+                'calculated_fine': round(calculated_fine, 3),
+                'capped_fine': round(capped_fine, 3),
+                'fine_amount': round(capped_fine, 3),
+                'is_capped': is_capped,
+                'max_fine': self.MAX_FINE
+            }
+        except Exception as e:
+            return {
+                'overdue_days': 0,
+                'daily_rate': self.FINE_PER_DAY,
+                'calculated_fine': 0.0,
+                'capped_fine': 0.0,
+                'fine_amount': 0.0,
+                'is_capped': False,
+                'max_fine': self.MAX_FINE,
+                'error': str(e)
+            }
+
     def _determine_status(self, due_date_str: str, return_date: Optional[str]) -> str:
         """Determine circulation status"""
         if return_date:
@@ -155,10 +212,24 @@ class CirculationService:
 
                 # Calculate fine if overdue
                 fine_amount = record.get('fine_amount')
-                if fine_amount is None and calculated_status == 'overdue':
-                    fine_amount = self._calculate_fine(record['due_date'])
+                fine_breakdown = None
 
-                records.append({
+                # Get return date for fine calculation
+                return_date_obj = None
+                if record.get('return_date'):
+                    try:
+                        return_date_obj = datetime.fromisoformat(record['return_date'].replace('Z', '+00:00')).date()
+                    except:
+                        pass
+
+                if fine_amount is None and calculated_status == 'overdue':
+                    fine_amount = self._calculate_fine(record['due_date'], return_date_obj)
+
+                # Always include fine breakdown for overdue or returned overdue books
+                if calculated_status == 'overdue' or (calculated_status == 'returned' and fine_amount and fine_amount > 0):
+                    fine_breakdown = self._calculate_fine_breakdown(record['due_date'], return_date_obj)
+
+                record_data = {
                     'id': record['id'],
                     'user_id': record['user_id'],
                     'user_name': user.get('full_name', 'Unknown'),
@@ -179,7 +250,13 @@ class CirculationService:
                     'notes': record.get('notes'),
                     'created_at': record['created_at'],
                     'updated_at': record['updated_at']
-                })
+                }
+
+                # Add fine breakdown if available
+                if fine_breakdown:
+                    record_data['fine_breakdown'] = fine_breakdown
+
+                records.append(record_data)
 
             # Calculate pagination
             actual_total = len(records)
@@ -481,3 +558,57 @@ class CirculationService:
         except Exception as e:
             print(f"Error getting circulation stats: {str(e)}")
             raise Exception(f"Failed to get circulation stats: {str(e)}")
+
+    async def collect_user_fines(self, user_id: str) -> Dict:
+        """
+        Collect all unpaid fines for a user
+        Returns the total amount collected and updated records
+        """
+        try:
+            # Get all circulation records with unpaid fines for this user
+            response = self.supabase.table('circulation_records').select(
+                """
+                id, fine_amount, fine_paid,
+                users(id, full_name, email),
+                books(id, title)
+                """
+            ).eq('user_id', user_id).eq('fine_paid', False).execute()
+
+            records = response.data
+            if not records:
+                return {
+                    'user_id': user_id,
+                    'total_collected': 0.0,
+                    'records_updated': 0,
+                    'message': 'No unpaid fines found for this user'
+                }
+
+            # Calculate total fines
+            total_fines = sum(record.get('fine_amount', 0) or 0 for record in records)
+
+            if total_fines == 0:
+                return {
+                    'user_id': user_id,
+                    'total_collected': 0.0,
+                    'records_updated': 0,
+                    'message': 'No outstanding fines for this user'
+                }
+
+            # Mark all fines as paid
+            record_ids = [record['id'] for record in records]
+            for record_id in record_ids:
+                self.supabase.table('circulation_records').update({
+                    'fine_paid': True,
+                    'updated_at': datetime.utcnow().isoformat()
+                }).eq('id', record_id).execute()
+
+            return {
+                'user_id': user_id,
+                'total_collected': total_fines,
+                'records_updated': len(record_ids),
+                'message': f'Successfully collected {total_fines:.3f} OMR from {records[0]["users"]["full_name"]}'
+            }
+
+        except Exception as e:
+            print(f"Error collecting fines: {str(e)}")
+            raise Exception(f"Failed to collect fines: {str(e)}")

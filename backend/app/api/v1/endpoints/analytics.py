@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import Optional
 from datetime import datetime, timedelta
 from ....db import get_supabase
+from ....core.dependencies import require_any_permission
 from supabase import Client
 
 router = APIRouter()
@@ -18,20 +19,25 @@ def get_db() -> Client:
 @router.get("/borrowing-trends", summary="Get borrowing and return trends")
 async def get_borrowing_trends(
     days: int = Query(default=30, ge=1, le=365, description="Number of days to fetch"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "circulation.checkout", "circulation.checkin"]))
 ):
     """
     Get borrowing and return trends for the last N days
 
+    **Staff only** - requires reports or circulation permissions
+
     Returns daily counts of borrowed and returned books
+
+    **Required permission:** Any of reports.view, circulation.checkout, or circulation.checkin
     """
     try:
         # Calculate date range
         end_date = datetime.now()
         start_date = end_date - timedelta(days=days)
 
-        # Fetch borrowing data (transactions with checkout date in range)
-        borrowing_response = db.table('transactions').select(
+        # Fetch borrowing data (circulation_records with checkout date in range)
+        borrowing_response = db.table('circulation_records').select(
             'checkout_date, id'
         ).gte(
             'checkout_date', start_date.isoformat()
@@ -39,8 +45,8 @@ async def get_borrowing_trends(
             'checkout_date', end_date.isoformat()
         ).execute()
 
-        # Fetch return data (transactions with return date in range)
-        return_response = db.table('transactions').select(
+        # Fetch return data (circulation_records with return date in range)
+        return_response = db.table('circulation_records').select(
             'return_date, id'
         ).gte(
             'return_date', start_date.isoformat()
@@ -93,11 +99,18 @@ async def get_borrowing_trends(
 
 
 @router.get("/categories", summary="Get books by category")
-async def get_books_by_category(db: Client = Depends(get_db)):
+async def get_books_by_category(
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "inventory.read"]))
+):
     """
     Get count of books grouped by category
 
+    **Staff only** - requires reports or inventory permissions
+
     Returns book counts per category for pie/bar chart
+
+    **Required permission:** Any of reports.view or inventory.read
     """
     try:
         # Fetch books with category information
@@ -142,11 +155,18 @@ async def get_books_by_category(db: Client = Depends(get_db)):
 
 
 @router.get("/user-distribution", summary="Get user distribution by type")
-async def get_user_distribution(db: Client = Depends(get_db)):
+async def get_user_distribution(
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "users.read"]))
+):
     """
     Get user count distribution by user type
 
+    **Staff only** - requires reports or users permissions
+
     Returns user counts per type (Student, Teacher, Staff, etc.)
+
+    **Required permission:** Any of reports.view or users.read
     """
     try:
         # Fetch all active users
@@ -188,20 +208,25 @@ async def get_user_distribution(db: Client = Depends(get_db)):
 @router.get("/monthly-circulation", summary="Get monthly circulation statistics")
 async def get_monthly_circulation(
     months: int = Query(default=12, ge=1, le=24, description="Number of months to fetch"),
-    db: Client = Depends(get_db)
+    db: Client = Depends(get_db),
+    current_user: dict = Depends(require_any_permission(["reports.view", "circulation.checkout", "circulation.checkin"]))
 ):
     """
     Get monthly circulation statistics
 
+    **Staff only** - requires reports or circulation permissions
+
     Returns monthly totals of checkouts and returns
+
+    **Required permission:** Any of reports.view, circulation.checkout, or circulation.checkin
     """
     try:
         # Calculate date range
         end_date = datetime.now()
         start_date = end_date - timedelta(days=months*30)  # Approximate
 
-        # Fetch all transactions in range
-        response = db.table('transactions').select(
+        # Fetch all circulation_records in range
+        response = db.table('circulation_records').select(
             'checkout_date, return_date, id'
         ).gte(
             'checkout_date', start_date.isoformat()

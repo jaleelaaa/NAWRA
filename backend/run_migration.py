@@ -1,63 +1,56 @@
 """
-Run database migration for adding Arabic name support
+Script to run the user_settings table migration
 """
-import sys
-from pathlib import Path
 from app.db.supabase_client import get_supabase
 
 def run_migration():
-    """Execute the Arabic name migration"""
+    """Run the user_settings table migration"""
+
+    # Read the SQL migration file
+    with open('migrations/create_user_settings_table.sql', 'r', encoding='utf-8') as f:
+        sql = f.read()
+
+    # Get Supabase client
+    supabase = get_supabase()
+
+    print("Running migration: create_user_settings_table.sql")
+    print("-" * 60)
+
     try:
-        # Get Supabase client
-        supabase = get_supabase()
+        # Execute the SQL using Supabase's RPC or direct SQL execution
+        # Note: Supabase Python client doesn't support direct SQL execution
+        # You need to run this via the Supabase dashboard SQL editor
 
-        # Read migration SQL file
-        migration_file = Path(__file__).parent / "sql" / "002_add_arabic_name.sql"
-        with open(migration_file, 'r', encoding='utf-8') as f:
-            sql_content = f.read()
+        print("IMPORTANT:")
+        print("The Supabase Python client doesn't support direct SQL execution.")
+        print("Please run this migration manually:")
+        print("")
+        print("1. Go to your Supabase Dashboard")
+        print("2. Navigate to SQL Editor")
+        print("3. Copy the contents of: backend/migrations/create_user_settings_table.sql")
+        print("4. Paste and execute in the SQL editor")
+        print("")
+        print("Or use psql:")
+        print('psql "YOUR_SUPABASE_CONNECTION_STRING" -f migrations/create_user_settings_table.sql')
+        print("")
 
-        print("=" * 60)
-        print("Running Arabic Name Migration...")
-        print("=" * 60)
-
-        # Split SQL into individual statements and execute
-        statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
-
-        for idx, statement in enumerate(statements, 1):
-            if not statement or statement.startswith('--'):
-                continue
-
-            print(f"\nExecuting statement {idx}/{len(statements)}...")
-
-            # Execute using supabase PostgREST or raw query
-            # Since Supabase Python client uses PostgREST, we'll use direct SQL via RPC
-            try:
-                # For ALTER TABLE and UPDATE statements, we need to use raw SQL
-                # This requires setting up a SQL function in Supabase or using direct connection
-                print(f"Statement: {statement[:100]}...")
-                # Note: Supabase Python client doesn't support raw SQL directly
-                # You'll need to run these via Supabase Dashboard SQL editor
-                print("⚠ Please run this SQL statement via Supabase Dashboard SQL Editor")
-            except Exception as e:
-                print(f"✗ Error: {e}")
-                continue
-
-        print("\n" + "=" * 60)
-        print("Migration Instructions:")
-        print("=" * 60)
-        print("Please run the SQL migration manually via Supabase Dashboard:")
-        print(f"1. Open your Supabase project dashboard")
-        print(f"2. Go to SQL Editor")
-        print(f"3. Copy and paste the contents of: {migration_file}")
-        print(f"4. Click 'Run' to execute")
-        print("=" * 60)
-
-        return True
+        # Alternative: Check if table exists
+        result = supabase.table('user_settings').select('*').limit(1).execute()
+        print("SUCCESS: user_settings table already exists!")
+        print(f"Table columns: {result.data}")
 
     except Exception as e:
-        print(f"✗ Migration failed: {e}")
-        return False
+        error_str = str(e)
+        if 'relation "user_settings" does not exist' in error_str or 'table "user_settings" does not exist' in error_str:
+            print("Table does not exist yet. Please run the migration manually.")
+            print("")
+            print("SQL to execute:")
+            print("-" * 60)
+            print(sql[:500] + "...")
+            print("-" * 60)
+        else:
+            print(f"Error: {e}")
+            raise
 
 if __name__ == "__main__":
-    success = run_migration()
-    sys.exit(0 if success else 1)
+    run_migration()

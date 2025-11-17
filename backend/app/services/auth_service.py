@@ -22,7 +22,7 @@ class AuthService:
         try:
             # Fetch user from database with role information
             response = self.supabase.table('users').select(
-                "id, email, password_hash, full_name, user_type, is_active, created_at, roles(name)"
+                "id, email, password_hash, full_name, arabic_name, user_type, is_active, created_at, roles(name, permissions)"
             ).eq('email', email).eq('is_active', True).execute()
 
             if not response.data or len(response.data) == 0:

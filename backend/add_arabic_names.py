@@ -1,62 +1,62 @@
+#!/usr/bin/env python3
 """
 Add Arabic names to existing users
-Note: The column must be added first via Supabase Dashboard SQL Editor
+Note: The arabic_name column must be added manually in Supabase SQL Editor first
 """
-from app.db.supabase_client import get_supabase
+import sys
+from pathlib import Path
 
-def add_arabic_names():
-    """Update existing users with Arabic names"""
-    supabase = get_supabase()
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent))
 
-    # Mapping of English names to Arabic names
-    name_mappings = {
-        'System Admin': 'مدير النظام',
-        'System Administrator': 'مسؤول النظام',
-        'Test Cataloger': 'أمين فهرسة تجريبي',
-        'Circulation Staff Member': 'عضو موظفي التداول',
-        'Library Patron': 'مستفيد المكتبة',
-        'Head Librarian': 'رئيس أمناء المكتبة',
-        'Circulation Staff': 'موظف التداول',
-        'Catalog Manager': 'مدير الفهرسة',
-        'Test Patron': 'مستفيد تجريبي'
+from supabase import create_client
+from app.core.config import settings
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def main():
+    """Add Arabic names to users"""
+    logger.info("🔧 Adding Arabic names to users...")
+
+    # Get Supabase client
+    supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
+
+    # User Arabic names mapping
+    user_arabic_names = {
+        'admin@ministry.om': 'مسؤول النظام',
+        'admin@nawra.om': 'مسؤول النظام',
+        'librarian@ministry.om': 'أمين مكتبة تجريبي',
+        'circulation@ministry.om': 'موظف تداول تجريبي',
+        'cataloger@ministry.om': 'أمين فهرسة تجريبي',
+        'patron@ministry.om': 'مستفيد تجريبي',
+        'patron@test.om': 'مستفيد المكتبة',
+        'system@nawra.om': 'مستخدم النظام الافتراضي',
     }
 
-    print("=" * 60)
-    print("Updating users with Arabic names...")
-    print("=" * 60)
+    logger.info(f"Updating {len(user_arabic_names)} users...")
 
-    # Fetch all users
-    response = supabase.table('users').select('id, full_name, email').execute()
+    for email, arabic_name in user_arabic_names.items():
+        try:
+            result = supabase.table('users').update({
+                'arabic_name': arabic_name
+            }).eq('email', email).execute()
 
-    if not response.data:
-        print("No users found")
-        return
+            if result.data:
+                logger.info(f"✅ Updated {email}: {arabic_name}")
+            else:
+                logger.warning(f"⚠️ User not found: {email}")
 
-    updated_count = 0
-    for user in response.data:
-        full_name = user['full_name']
-        arabic_name = name_mappings.get(full_name)
+        except Exception as e:
+            logger.error(f"❌ Failed to update {email}: {str(e)}")
 
-        if arabic_name:
-            try:
-                # Update user with Arabic name
-                supabase.table('users').update({
-                    'arabic_name': arabic_name
-                }).eq('id', user['id']).execute()
+    logger.info("=" * 60)
+    logger.info("✅ Arabic names update completed!")
+    logger.info("Note: Make sure arabic_name column exists in database")
 
-                print(f"[OK] Updated: {full_name} -> {arabic_name}")
-                updated_count += 1
-            except Exception as e:
-                print(f"[ERROR] Error updating {full_name}: {e}")
-        else:
-            print(f"[WARN] No Arabic mapping for: {full_name}")
-
-    print("\n" + "=" * 60)
-    print(f"Updated {updated_count} users successfully!")
-    print("=" * 60)
 
 if __name__ == "__main__":
-    try:
-        add_arabic_names()
-    except Exception as e:
-        print(f"Error: {e}")
+    main()
