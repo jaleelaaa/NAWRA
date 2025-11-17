@@ -133,16 +133,65 @@ def custom_openapi():
 app.openapi = custom_openapi
 
 # Track router loading status
-router_status = {"auth": "not_loaded", "error": None}
+router_status = {
+    "auth": "not_loaded",
+    "analytics": "not_loaded",
+    "dashboard": "not_loaded",
+    "users": "not_loaded",
+    "circulation": "not_loaded",
+    "reports": "not_loaded",
+    "settings": "not_loaded",
+    "books": "not_loaded",
+    "profile": "not_loaded",
+    "requests": "not_loaded",
+    "error": None
+}
 
 # Include routers
 try:
-    from app.api.v1.endpoints import auth
+    from app.api.v1.endpoints import auth, analytics, dashboard, users, circulation, reports, settings, books, profile, requests
+
+    # Authentication
     app.include_router(auth.router, prefix="/api/v1/auth", tags=["authentication"])
     router_status["auth"] = "loaded"
+
+    # Analytics & Dashboard
+    app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
+    router_status["analytics"] = "loaded"
+
+    app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboard"])
+    router_status["dashboard"] = "loaded"
+
+    # Users Management
+    app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
+    router_status["users"] = "loaded"
+
+    # Circulation
+    app.include_router(circulation.router, prefix="/api/v1/circulation", tags=["circulation"])
+    router_status["circulation"] = "loaded"
+
+    # Reports
+    app.include_router(reports.router, prefix="/api/v1/reports", tags=["reports"])
+    router_status["reports"] = "loaded"
+
+    # Settings
+    app.include_router(settings.router, prefix="/api/v1/settings", tags=["settings"])
+    router_status["settings"] = "loaded"
+
+    # Books & Categories (no prefix - endpoints define their own paths)
+    app.include_router(books.router, prefix="/api/v1", tags=["books", "categories"])
+    router_status["books"] = "loaded"
+
+    # Patron self-service
+    app.include_router(profile.router, prefix="/api/v1/profile", tags=["profile"])
+    router_status["profile"] = "loaded"
+
+    app.include_router(requests.router, prefix="/api/v1/requests", tags=["book-requests"])
+    router_status["requests"] = "loaded"
+
 except Exception as e:
     router_status["error"] = str(e)
-    print(f"Warning: Could not load auth router: {e}")
+    print(f"Warning: Could not load routers: {e}")
     import traceback
     traceback.print_exc()
 
