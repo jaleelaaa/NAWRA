@@ -441,8 +441,6 @@ All accounts use the **standardized password**: `Nawra2025!`
 
 *Figure 1: NAWRA Library Management System - Complete 5-Layer Architecture*
 
-**[View High-Res PNG](docs/images/NAWRA_Architecture_Diagram.png)** | **[Download SVG](docs/images/NAWRA_Architecture.drawio.svg)** | **[Edit in Draw.io](NAWRA_Architecture_Diagram.drawio)**
-
 </div>
 
 The architecture follows a modern 5-layer approach:
