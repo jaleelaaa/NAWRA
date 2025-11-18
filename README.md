@@ -82,6 +82,12 @@ cd frontend && npm run dev
 
 **🎉 Your library is live!**
 
+### 🚀 Production (Try Now!)
+- 🌐 **Frontend:** [https://nawra.onrender.com](https://nawra.onrender.com)
+- ⚙️ **Backend API:** [https://nawra-backend.onrender.com](https://nawra-backend.onrender.com)
+- 📖 **API Docs:** [https://nawra-backend.onrender.com/docs](https://nawra-backend.onrender.com/docs)
+
+### 💻 Local Development
 - 🌐 **Frontend:** [http://localhost:3000](http://localhost:3000)
 - ⚙️ **Backend API:** [http://localhost:8000](http://localhost:8000)
 - 📖 **API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)

@@ -58,6 +58,13 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at:
+
+**🚀 Production:**
+- API: https://nawra-backend.onrender.com
+- Interactive API docs: https://nawra-backend.onrender.com/docs
+- Alternative docs: https://nawra-backend.onrender.com/redoc
+
+**💻 Local Development:**
 - API: http://localhost:8000
 - Interactive API docs: http://localhost:8000/docs
 - Alternative docs: http://localhost:8000/redoc
@@ -87,7 +94,9 @@ backend/
 
 ## API Documentation
 
-Once running, visit http://localhost:8000/docs for interactive API documentation.
+**🚀 Production:** Visit [https://nawra-backend.onrender.com/docs](https://nawra-backend.onrender.com/docs) for live API documentation.
+
+**💻 Local Development:** Visit [http://localhost:8000/docs](http://localhost:8000/docs) for interactive API documentation.
 
 ## Development
 

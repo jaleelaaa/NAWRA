@@ -182,8 +182,9 @@ Both demos covered the following flow:
 
 - **Demo Videos:** `frontend/test-results/patron-customer-demo*/video.webm`
 - **Screenshots:** `frontend/demo-results/*.png`
-- **Live System:** http://localhost:3000
-- **API Docs:** http://localhost:8000/docs
+- **🚀 Live System:** [https://nawra.onrender.com](https://nawra.onrender.com)
+- **📖 API Docs:** [https://nawra-backend.onrender.com/docs](https://nawra-backend.onrender.com/docs)
+- **💻 Local Development:** http://localhost:3000
 
 ---
 

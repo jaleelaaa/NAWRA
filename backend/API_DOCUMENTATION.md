@@ -7,7 +7,7 @@ The NAWRA API provides a comprehensive RESTful interface for managing library op
 ## API Documentation Access
 
 ### Swagger UI (Interactive)
-- **Production**: https://nawra-backend-pd.vercel.app/docs
+- **Production**: https://nawra-backend.onrender.com/docs
 - **Local**: http://localhost:8000/docs
 
 Swagger UI provides an interactive interface where you can:
@@ -17,13 +17,13 @@ Swagger UI provides an interactive interface where you can:
 - Authenticate and test protected endpoints
 
 ### ReDoc (Alternative Documentation)
-- **Production**: https://nawra-backend-pd.vercel.app/redoc
+- **Production**: https://nawra-backend.onrender.com/redoc
 - **Local**: http://localhost:8000/redoc
 
 ReDoc provides a clean, readable documentation format.
 
 ### OpenAPI Specification
-- **Production**: https://nawra-backend-pd.vercel.app/openapi.json
+- **Production**: https://nawra-backend.onrender.com/openapi.json
 - **Local**: http://localhost:8000/openapi.json
 
 Download the OpenAPI JSON specification for use with tools like Postman, Insomnia, or code generators.
