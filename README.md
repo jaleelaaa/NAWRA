@@ -26,6 +26,7 @@
 | 🔐 **Login** | [https://nawra.onrender.com/en/login](https://nawra.onrender.com/en/login) | Login page (see [credentials](#-login-credentials)) |
 | 📖 **API Docs** | [https://nawra-backend.onrender.com/docs](https://nawra-backend.onrender.com/docs) | Interactive Swagger UI |
 | 📘 **ReDoc** | [https://nawra-backend.onrender.com/redoc](https://nawra-backend.onrender.com/redoc) | API documentation |
+| 📂 **Implementation Resources** | [Google Drive](https://drive.google.com/drive/u/1/folders/17wSv1V6tNQa5bslNRuQUnqC0E7zkJw8D) | Project documentation & resources |
 
 ---
 
