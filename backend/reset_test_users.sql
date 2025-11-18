@@ -274,7 +274,7 @@ ORDER BY
 -- Patron: patron@nawra.om
 --
 -- Next Steps:
--- 1. Test login via frontend: http://localhost:3000/en/login
+-- 1. Test login via frontend: https://nawra.onrender.com/en/login
 -- 2. Test API: POST http://localhost:8000/api/v1/auth/login
 -- 3. Verify permissions for each role
 --

@@ -496,14 +496,14 @@ npm run dev
 ```
 
 ### 2. Login as Librarian
-- URL: http://localhost:3000/en/login
+- URL: https://nawra.onrender.com/en/login
 - Email: librarian@ministry.om
 - Password: Test@123
 
 ### 3. Test Dashboard Features
 After login, you'll be redirected to the dashboard:
 
-**English**: http://localhost:3000/en/dashboard
+**English**: https://nawra.onrender.com/en/dashboard
 - ✅ View welcome banner
 - ✅ Check statistics cards
 - ✅ View recent activity feed
@@ -513,7 +513,7 @@ After login, you'll be redirected to the dashboard:
 - ✅ Switch language to Arabic
 - ✅ Test logout
 
-**Arabic**: http://localhost:3000/ar/dashboard
+**Arabic**: https://nawra.onrender.com/ar/dashboard
 - ✅ Verify RTL layout
 - ✅ Check Arabic translations
 - ✅ Test navigation in Arabic
